@@ -11,6 +11,21 @@ import subprocess
 from pathlib import Path
 
 
+ROOT_REDIRECT_TEMPLATE = """<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"utf-8\">
+    <meta http-equiv=\"refresh\" content=\"0; url=html/index.html\">
+    <title>Silex Documentation</title>
+    <link rel=\"canonical\" href=\"html/index.html\">
+</head>
+<body>
+    <p>Redirecting to <a href=\"html/index.html\">Silex Documentation</a>...</p>
+</body>
+</html>
+"""
+
+
 def build_docs(output_dir: Path) -> Path:
     """Render the checked-in docs into a static HTML site."""
     project_root = Path(__file__).resolve().parent.parent
@@ -35,6 +50,7 @@ def build_docs(output_dir: Path) -> Path:
 
     generated_doxyfile.write_text(doxyfile_contents, encoding="utf-8")
     subprocess.run(["doxygen", str(generated_doxyfile)], check=True)
+    (output_dir / "index.html").write_text(ROOT_REDIRECT_TEMPLATE, encoding="utf-8")
     return output_dir
 
 
