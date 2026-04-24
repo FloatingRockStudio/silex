@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file bind_core.cpp
 /// @brief Python bindings for core components: Registry, ExpressionParser, ExpressionEvaluator, FileSchemaLoader.
 

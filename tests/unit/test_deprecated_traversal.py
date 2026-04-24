@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 import json
 import os
 import uuid

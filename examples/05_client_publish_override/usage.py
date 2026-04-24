@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Demonstrate a client-specific publish variant with a customized version token."""
 
 from silex import GenericResolver, ResolverStatus

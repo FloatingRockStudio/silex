@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Demonstrate canonical writes and opt-in reads for deprecated paths."""
 
 from silex import GenericResolver, ResolverStatus, SilexParseOptions

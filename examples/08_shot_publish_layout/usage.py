@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Demonstrate a shot-oriented publish layout with a shared shot template."""
 
 from silex import GenericResolver, ResolverStatus

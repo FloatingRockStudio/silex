@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """
 Unit tests for the GlobTag functor with output options.
 """

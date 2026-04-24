@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file URISegmenter.cpp
 /// @brief Implementation of URI and query parameter segmentation.
 

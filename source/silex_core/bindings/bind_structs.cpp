@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file bind_structs.cpp
 /// @brief Python bindings for Silex data structures and Box accessor.
 

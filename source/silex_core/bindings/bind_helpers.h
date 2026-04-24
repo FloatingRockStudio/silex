@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file bind_helpers.h
 /// @brief Shared conversion utilities for pybind11 bindings.
 

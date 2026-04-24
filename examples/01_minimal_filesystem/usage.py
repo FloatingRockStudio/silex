@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Demonstrate the smallest practical filesystem round-trip."""
 
 from silex import GenericResolver, ResolverStatus

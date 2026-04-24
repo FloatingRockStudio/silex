@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Build the Silex documentation site with Doxygen."""
 
 from __future__ import annotations

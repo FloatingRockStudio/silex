@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Demonstrate a schema-declared custom functor UID backed by a registered Python functor instance."""
 
 from __future__ import annotations

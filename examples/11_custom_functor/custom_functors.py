@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Helpers for wiring custom functor registrations in the executable examples."""
 
 from __future__ import annotations

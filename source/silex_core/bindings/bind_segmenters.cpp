@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file bind_segmenters.cpp
 /// @brief Python bindings for segmenter implementations.
 

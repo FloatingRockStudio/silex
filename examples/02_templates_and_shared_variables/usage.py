@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Demonstrate imported templates, variables, and core functor aliases."""
 
 from silex import GenericResolver, ResolverStatus

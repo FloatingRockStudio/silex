@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Demonstrate URI round-trips with ordered query parameter partitions."""
 
 from silex import GenericResolver, ResolverStatus

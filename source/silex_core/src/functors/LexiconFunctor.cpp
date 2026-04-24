@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file LexiconFunctor.cpp
 /// @brief Implementation of abbreviation/full-name mapping functor.
 

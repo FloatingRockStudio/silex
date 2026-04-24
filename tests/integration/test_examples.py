@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Validate that every shipped example remains a coherent executable demonstration."""
 
 from __future__ import annotations

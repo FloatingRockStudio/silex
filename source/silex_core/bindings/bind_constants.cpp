@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file bind_constants.cpp
 /// @brief Python bindings for Silex enums and constants.
 
