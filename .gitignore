@@ -154,6 +154,8 @@ CMakeFiles/
 cmake-install.cmake
 compile_commands.json
 .cpp_test_build/
+.cmake_config_check/
+.cmake_config_check_fresh/
 
 # Local debug / scratch workspace content
 dev/

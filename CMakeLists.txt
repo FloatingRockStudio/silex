@@ -59,6 +59,12 @@ if(NOT jsoncpp_FOUND)
     set(JSONCPP_WITH_POST_BUILD_UNITTEST OFF CACHE INTERNAL "")
     set(BUILD_OBJECT_LIBS OFF CACHE INTERNAL "")
     FetchContent_MakeAvailable(jsoncpp)
+
+    # Wheel builds link JsonCpp statically into shared objects on Linux, so the
+    # fetched archive must be compiled as position-independent code.
+    if(TARGET jsoncpp_static)
+        set_target_properties(jsoncpp_static PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    endif()
 endif()
 
 # spdlog - FetchContent (header-only mode)
