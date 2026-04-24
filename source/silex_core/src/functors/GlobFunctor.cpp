@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file GlobFunctor.cpp
 /// @brief Implementation of filesystem glob pattern matching functor.
 

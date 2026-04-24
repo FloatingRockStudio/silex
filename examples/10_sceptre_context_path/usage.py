@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Demonstrate compact sceptre context paths for both shot and asset views."""
 
 from silex import GenericResolver, ResolverStatus

@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Demonstrate a reusable publish tree that serves as an inheritance base."""
 
 from silex import GenericResolver, ResolverStatus

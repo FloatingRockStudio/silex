@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file ExpressionEvaluator.cpp
 /// @brief Implementation of expression graph evaluation with functor execution.
 

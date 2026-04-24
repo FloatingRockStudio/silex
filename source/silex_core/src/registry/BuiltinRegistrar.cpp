@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file BuiltinRegistrar.cpp
 /// @brief Registers all built-in functors and segmenters.
 

@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file SchemaValidator.cpp
 /// @brief Implementation of JSON schema validation for .silex files.
 

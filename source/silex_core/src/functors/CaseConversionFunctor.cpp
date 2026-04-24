@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file CaseConversionFunctor.cpp
 /// @brief Implementation of case conversion functors (lower, upper, title).
 

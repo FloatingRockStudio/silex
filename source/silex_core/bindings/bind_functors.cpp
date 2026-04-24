@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file bind_functors.cpp
 /// @brief Python bindings for concrete functor implementations.
 

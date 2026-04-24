@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Demonstrate inheritance by customizing one nested segment in a shot layout."""
 
 from silex import GenericResolver, ResolverStatus

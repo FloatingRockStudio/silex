@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file Logging.cpp
 /// @brief Implementation of spdlog-based logging configuration.
 

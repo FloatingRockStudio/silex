@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file module.cpp
 /// @brief pybind11 module definition for silex Python extension.
 

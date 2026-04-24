@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file SchemaUtils.cpp
 /// @brief Implementation of schema parsing and segment building utilities.
 

@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file ExpressionParser.cpp
 /// @brief Implementation of functor expression parsing into DAG structures.
 

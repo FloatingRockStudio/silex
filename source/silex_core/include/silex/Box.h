@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file Box.h
 /// @brief Typed accessor for nested ContextMap values with dot-notation paths and defaults.
 

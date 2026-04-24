@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file GenericResolver.cpp
 /// @brief Public API implementation of the main path/context resolution engine.
 

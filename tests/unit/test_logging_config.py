@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Tests for Silex logging verbosity configuration.
 
 Logging is handled in C++ via spdlog. These tests verify the Python API

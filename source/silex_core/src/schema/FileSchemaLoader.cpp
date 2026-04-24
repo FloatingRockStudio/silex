@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file FileSchemaLoader.cpp
 /// @brief Implementation of JSON5 schema file discovery and parsing.
 

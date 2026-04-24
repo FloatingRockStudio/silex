@@ -1,3 +1,6 @@
+# (C) Copyright 2026 Floating Rock Studio Ltd
+# SPDX-License-Identifier: MIT
+
 """Demonstrate an asset-focused URI identifier with structured options."""
 
 from silex import GenericResolver, ResolverStatus

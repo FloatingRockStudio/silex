@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file CaseSplitFunctor.cpp
 /// @brief Implementation of case splitting functors (camelCase, snake_case).
 

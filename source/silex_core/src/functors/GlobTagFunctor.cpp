@@ -1,3 +1,6 @@
+// (C) Copyright 2026 Floating Rock Studio Ltd
+// SPDX-License-Identifier: MIT
+
 /// @file GlobTagFunctor.cpp
 /// @brief Implementation of version/tag-aware file matching functor.
 
