@@ -36,8 +36,9 @@ jobs:
         os:
           - windows-latest
           - ubuntu-latest
-          - macos-13
           - macos-14
+          - macos-15
+          - macos-26
 
     steps:
       - uses: actions/checkout@v4
@@ -90,16 +91,22 @@ jobs:
           name: publish-wheels-ubuntu-latest
           path: dist
 
-      - name: Download macOS x64 wheels
-        uses: actions/download-artifact@v4
-        with:
-          name: publish-wheels-macos-13
-          path: dist
-
       - name: Download macOS arm64 wheels
         uses: actions/download-artifact@v4
         with:
           name: publish-wheels-macos-14
+          path: dist
+
+      - name: Download macOS 15 wheels
+        uses: actions/download-artifact@v4
+        with:
+          name: publish-wheels-macos-15
+          path: dist
+
+      - name: Download macOS 26 wheels
+        uses: actions/download-artifact@v4
+        with:
+          name: publish-wheels-macos-26
           path: dist
 
       - name: Publish to PyPI
