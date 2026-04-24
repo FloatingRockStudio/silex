@@ -5,8 +5,8 @@ requires = [
 build-backend = "scikit_build_core.build"
 
 [project]
-name = "silex"
-version = "0.4.1"
+name = "fr-silex"
+version = "0.5.0"
 description = "Schema-driven path and URI resolver with a C++17 core and pybind11 bindings"
 readme = "README.md"
 requires-python = ">=3.9"

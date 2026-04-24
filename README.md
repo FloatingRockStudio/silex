@@ -2,14 +2,20 @@
 
 **Silex** is a graph-based path resolution engine for VFX and animation pipelines. It bidirectionally converts between filesystem paths, URIs, and structured context dictionaries using schema-driven segment trees and pluggable functor expressions.
 
-The runtime is implemented as a C++17 core library with pybind11 bindings. Python consumers install prebuilt wheels from PyPI and import the compiled `silex` module, while C++ consumers can still build against `silex_core` and the public headers in `include/silex`.
+The runtime is implemented as a C++17 core library with pybind11 bindings. Python consumers install the published `fr-silex` distribution from PyPI and import the compiled `silex` module, while C++ consumers can still build against `silex_core` and the public headers in `include/silex`.
 
 ## Installation
 
 Install the published package with pip:
 
 ```bash
-pip install silex
+pip install fr-silex
+```
+
+Import it in Python as `silex`:
+
+```python
+import silex
 ```
 
 If you are building from source locally, use a normal Python build frontend:
@@ -50,6 +56,8 @@ python -m build
 ```
 
 GitHub Actions builds wheels for Windows, Linux, and macOS, publishes tagged releases to PyPI, and publishes the generated Doxygen site to GitHub Pages.
+
+The published distribution name is `fr-silex`. The Python import name remains `silex`.
 
 The build also generates packaged API documentation from the public headers and documentation sources using Doxygen.
 

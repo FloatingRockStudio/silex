@@ -7,8 +7,10 @@ Silex resolves filesystem paths and URIs into structured context, and can genera
 Install the published package with pip:
 
 ```bash
-pip install silex
+pip install fr-silex
 ```
+
+The PyPI distribution is named `fr-silex`, but Python code imports `silex`.
 
 Build and install from source:
 

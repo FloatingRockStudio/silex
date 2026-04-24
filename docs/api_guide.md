@@ -83,8 +83,10 @@ auto pathResult = resolver.pathFromContext(writeCtx.data(),
 ### Install With Pip
 
 ```bash
-pip install silex
+pip install fr-silex
 ```
+
+The PyPI distribution name is `fr-silex`, while the import name stays `silex`.
 
 ### Build From Source
 

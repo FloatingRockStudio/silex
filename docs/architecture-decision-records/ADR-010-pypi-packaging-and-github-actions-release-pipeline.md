@@ -14,7 +14,7 @@ Silex was being prepared for open-source release, but the repository was still o
 - release automation for platform wheels, PyPI publication, and public documentation deployment was missing
 - the repository contained packaging-specific compatibility surfaces that were not part of the intended public workflow
 
-For open-source consumers, the primary installation path needs to be `pip install silex`. At the same time, the existing C++17 and pybind11 build graph should remain authoritative rather than being duplicated in a second build system.
+For open-source consumers, the primary installation path needs to be `pip install fr-silex`, while the Python import name remains `silex`. At the same time, the existing C++17 and pybind11 build graph should remain authoritative rather than being duplicated in a second build system.
 
 ## Decision
 
@@ -77,6 +77,7 @@ Once the public package and CI flow were validated through `pyproject.toml`, the
 ### Positive
 
 - Silex can be built with standard Python packaging commands
+- the published distribution can use the available `fr-silex` name while preserving `import silex`
 - the repository is ready for PyPI publication with prebuilt wheels
 - the public release path is automated for wheels, sdists, and docs
 - the existing CMake project remains the authoritative native build description

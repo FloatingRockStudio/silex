@@ -2,6 +2,8 @@
 
 This document covers the expected local workflow for packaging and validating Silex.
 
+The published PyPI distribution is `fr-silex`. Python code imports `silex` after installation.
+
 ## Python Package Build
 
 Build the wheel and source distribution with standard Python tooling:
@@ -43,6 +45,8 @@ The repository includes three GitHub Actions workflows:
 - `publish.yml` publishes tagged releases to PyPI through trusted publishing
 - `docs.yml` builds the Doxygen site and deploys it to GitHub Pages
 
+When validating a release candidate locally, confirm that the built package metadata reports `fr-silex` and that `import silex` still succeeds.
+
 ## Tests
 
 The package defines two primary test suites:
@@ -68,6 +72,7 @@ That output includes:
 Before cutting a release, verify:
 
 - the package imports successfully in Python
+- the built distribution is named `fr-silex`
 - resolver examples still work against bundled schemas
 - `build/docs/html/index.html` exists
 - the generated site includes the public headers you expect to ship
