@@ -1,0 +1,53 @@
+{
+    "uid": "test.case_sensitivity",
+    "import": ["./common"],
+    "pattern": ".*case_test.*",
+    "root_path": "./case_test",
+    "segmenter": "silex.impl.segmenters.FilesystemSegmenter",
+    "comment": "Case insensitive by default (no case_sensitive config)",
+    "paths": {
+        "project": {
+            "pattern": "[a-zA-Z][a-zA-Z0-9_]*",
+            "parse": {
+                "targets": {
+                    "project": {"group": 0}
+                }
+            },
+            "format": "{project}",
+            "paths": {
+                "tree": {
+                    "pattern": "(assets|shots)",
+                    "parse": {
+                        "targets": {
+                            "tree": {"group": 1}
+                        }
+                    },
+                    "format": "{tree}",
+                    "paths": {
+                        "classification": {
+                            "pattern": "[a-zA-Z]+",
+                            "parse": {
+                                "targets": {
+                                    "classification": {"group": 0}
+                                }
+                            },
+                            "format": "{classification}",
+                            "paths": {
+                                "asset": {
+                                    "pattern": "[a-zA-Z]+",
+                                    "endpoint": "asset",
+                                    "parse": {
+                                        "targets": {
+                                            "asset": {"group": 0}
+                                        }
+                                    },
+                                    "format": "{asset}"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

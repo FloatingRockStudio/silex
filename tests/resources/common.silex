@@ -1,0 +1,60 @@
+{
+    "templates": {
+        "version": {
+            "pattern": "v([0-9]+)",
+            "type": "number",
+            "padding": 3
+        },
+        "frame": {
+            "pattern": "([0-9]+)",
+            "type": "number",
+            "padding": 4,
+            "placeholder": "####"
+        },
+        "sequence_shot": {
+            "pattern": "([0-9]+)[-_]([0-9]+)",
+            "format": "{context.sequence}-{context.shot}",
+            "parse": {
+                "targets": {
+                    "sequence": {
+                        "group": 1
+                    },
+                    "shot": {
+                        "group": 2
+                    }
+                }
+            }
+        }
+    },
+    "config": {
+        "placeholders": {
+            "frame": "<frame>"
+        },
+        "variables": {
+            "lexicon": {
+                "classification": {
+                    "character": ["chr", "character"],
+                    "prop": ["prp", "prop"],
+                    "environment": ["env", "environment"],
+                    "vehicle": ["vhc", "vehicle"]
+                },
+                "aov": {
+                    "normal": ["N", "normal", "nrm"],
+                    "albedo": ["color", "rgb", "diffuse"],
+                    "roughness": ["rough", "R"],
+                    "metallic": ["metal", "M"]
+                }
+            },
+            "tags": {
+                "published": {"explicit": false, "alias": []},
+                "deprecated": {"explicit": true, "alias": []},
+                "pending": {"explicit": false, "alias": []},
+                "approved": {"explicit": false, "alias": []},
+                "locked": {"explicit": true, "alias": []},
+                "official": {"explicit": false, "alias": ["published", "latest"]},
+                "wip": {"explicit": false, "alias": ["pending.*"]},
+                "final": {"explicit": false, "alias": ["approved", "published"]}
+            }
+        }
+    }
+}

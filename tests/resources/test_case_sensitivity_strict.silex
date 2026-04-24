@@ -1,0 +1,58 @@
+{
+    "uid": "test.case_sensitivity_strict",
+    "import": ["./common"],
+    "pattern": ".*case_test.*",
+    "root_path": "./case_test",
+    "segmenter": "silex.impl.segmenters.FilesystemSegmenter",
+    "config": {
+        "case_sensitive": true
+    },
+    "comment": "Case sensitive enabled via config",
+    "paths": {
+        "project": {
+            "pattern": "[a-z][a-z0-9_]*",
+            "comment": "Only matches lowercase",
+            "parse": {
+                "targets": {
+                    "project": {"group": 0}
+                }
+            },
+            "format": "{project}",
+            "paths": {
+                "tree": {
+                    "pattern": "(assets|shots)",
+                    "comment": "Only matches lowercase",
+                    "parse": {
+                        "targets": {
+                            "tree": {"group": 1}
+                        }
+                    },
+                    "format": "{tree}",
+                    "paths": {
+                        "classification": {
+                            "pattern": "[a-z]+",
+                            "parse": {
+                                "targets": {
+                                    "classification": {"group": 0}
+                                }
+                            },
+                            "format": "{classification}",
+                            "paths": {
+                                "asset": {
+                                    "pattern": "[a-z]+",
+                                    "endpoint": "asset",
+                                    "parse": {
+                                        "targets": {
+                                            "asset": {"group": 0}
+                                        }
+                                    },
+                                    "format": "{asset}"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

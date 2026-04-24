@@ -1,0 +1,218 @@
+{
+    "templates": {
+        "version": {
+            "pattern": "v([0-9]{3,4})",
+            "type": "number",
+            "padding": 4,
+            "format": "v{value:04d}"
+        },
+        "frame": {
+            "pattern": "([0-9]{4})|([#]{4})|(\\$f4)",
+            "type": "number",
+            "padding": 4,
+            "format": "{value:04d}",
+            "parse": {
+                "expressions": [
+                    "{group[1]}?{group[1]}:({group[2]}?'####':({group[3]}?'$f4':''))->value"
+                ]
+            }
+        },
+        "udim": {
+            "pattern": "([0-9]{4})",
+            "type": "number",
+            "padding": 4,
+            "format": "{value:04d}"
+        },
+        "asset_variant": {
+            "pattern": "[a-zA-Z0-9]+",
+            "write_update_keys": [
+                "context.asset_variant",
+                "context.asset",
+                "context.variant",
+                "context.classification"
+            ],
+            "format": [
+                {
+                    "expression": "{context.asset_variant}",
+                    "when": {"key": "context.asset_variant", "exists": true}
+                },
+                {
+                    "expression": "$CC({context.asset}, {context.variant})",
+                    "when": {"keys": ["context.asset", "context.variant"], "exists": true}
+                }
+            ],
+            "parse": {
+                "expressions": [
+                    "$CC({value})->classification_token:0,asset:0--2,variant:-1:?",
+                    "$L({classification_token})->classification",
+                    "$lower({variant})->variant"
+                ],
+                "targets": {
+                    "context.classification": "classification",
+                    "context.asset_variant": "value",
+                    "context.asset": "asset",
+                    "context.variant": "variant"
+                }
+            }
+        },
+        "sequence_shot": {
+            "pattern": "([0-9]+)[-_]([0-9]+)",
+            "format": "{context.sequence}-{context.shot}",
+            "parse": {
+                "targets": {
+                    "context.sequence": {
+                        "group": 1
+                    },
+                    "context.shot": {
+                        "group": 2
+                    }
+                }
+            }
+        },
+        "asset_filename": {
+            "pattern": "([a-zA-Z0-9]+)[-_]([a-zA-Z0-9]+)[-_]([a-zA-Z0-9]+)[-_](v[0-9]{3,4})",
+            "format": "{context.asset_variant}_{entity.fragment}_{task.name}_{task.version}",
+            "parse": {
+                "expressions": [
+                    "{group[1]}->asset_variant",
+                    "{group[2]}->fragment",
+                    "{group[3]}->task_name",
+                    "{group[4]}->version"
+                ],
+                "targets": {
+                    "context.asset_variant": "asset_variant",
+                    "entity.fragment": "fragment",
+                    "task.name": "task_name",
+                    "task.version": "version"
+                }
+            }
+        },
+        "shot_filename": {
+            "pattern": "([0-9]+)[-_]([0-9]+)[-_]([a-zA-Z0-9]+)[-_](v[0-9]{3,4})",
+            "format": "{context.sequence}-{context.shot}_{task.name}_{task.version}",
+            "parse": {
+                "expressions": [
+                    "{group[1]}->sequence",
+                    "{group[2]}->shot",
+                    "{group[3]}->task_name",
+                    "{group[4]}->version"
+                ],
+                "targets": {
+                    "context.sequence": "sequence",
+                    "context.shot": "shot",
+                    "task.name": "task_name",
+                    "task.version": "version"
+                }
+            }
+        }
+    },
+    "config": {
+        "placeholders": {
+            "frame": "#",
+            "udim": "<UDIM>"
+        },
+        "variables": {
+            "lexicon": {
+                "classification": {
+                    "character": ["chr", "character"],
+                    "animal": ["aml", "animal"],
+                    "prop": ["prp", "prop"],
+                    "environment": ["env", "environment"],
+                    "vehicle": ["vhc", "vehicle"],
+                    "weapon": ["wpn", "weapon"]
+                },
+                "aov": {
+                    "normal": ["N", "normal", "nrm"],
+                    "albedo": ["color", "rgb", "diffuse"],
+                    "roughness": ["rough", "R"],
+                    "metallic": ["metal", "M"]
+                },
+                "task_category": {
+                    "animation": ["anim", "animation"],
+                    "compositing": ["comp", "compositing"],
+                    "lookdev": ["lookdev", "shading", "surfacing"],
+                    "modeling": ["model", "modeling"],
+                    "rigging": ["rig", "rigging"]
+                },
+                "texture_contributor": {
+                    "base_color": ["Col"],
+                    "decal_color": ["ColDecal"],
+                    "dirt_color": ["ColDirt"],
+                    "oil_color": ["ColOil"],
+                    "paint_color": ["ColPaint"],
+                    "primer_color": ["ColPrimer"],
+                    "tempering_color": ["ColTempering"],
+                    "subsurface_color": ["ColSS"],
+                    "specular_color": ["ColSpec"],
+                    "coat_color": ["ColCoat"],
+                    "sheen_color": ["ColSheen"],
+                    "emission_color": ["ColEmission"],
+                    "diffuse": ["D"],
+                    "normal": ["N"],
+                    "emission": ["E"],
+                    "metallic": ["M"],
+                    "specular": ["S"],
+                    "specular_roughness": ["SR"],
+                    "specular_roughness_multi": ["SRM"],
+                    "coat": ["C"],
+                    "coat_roughness": ["CR"],
+                    "height": ["H"],
+                    "flow": ["F"],
+                    "light": ["L"],
+                    "bump": ["B"],
+                    "transmission": ["T"],
+                    "subsurface": ["SS"],
+                    "subsurface_radius": ["SSRadius"],
+                    "sheen": ["SH"],
+                    "sheen_roughness": ["SHR"],
+                    "utility": ["U"],
+                    "bounding_box": ["UBox"],
+                    "curvature": ["UCurv"],
+                    "cavity": ["UCavity"],
+                    "drip_region": ["UDrip"],
+                    "material_id": ["UMatID"],
+                    "ambient_occlusion": ["UAO"],
+                    "rand_id": ["URandID"],
+                    "thickness": ["UThickness"],
+                    "mask": ["ID"],
+                    "mask_face_01": ["IDMF01"],
+                    "mask_face_02": ["IDMF02"],
+                    "mask_face_03": ["IDMF03"],
+                    "mask_face_04": ["IDMF04"],
+                    "mask_decal": ["IDDecal"],
+                    "mask_dirt": ["IDDirt"],
+                    "mask_dust": ["IDDust"],
+                    "mask_oil": ["IDOil"],
+                    "mask_oxide": ["IDOxide"],
+                    "mask_paint": ["IDPaint"],
+                    "mask_primer": ["IDPrimer"],
+                    "mask_scratch": ["IDScratch"],
+                    "mask_sunface": ["IDSunFace"],
+                    "mask_tarnish": ["IDTarnish"],
+                    "mask_opacity": ["IDOpac"],
+                    "displacement": ["DISP"],
+                    "displacement_broad": ["DISPBroad"],
+                    "displacement_dirt": ["DISPDirt"],
+                    "displacement_oil": ["DISPOil"],
+                    "displacement_fine": ["DISPFine"],
+                    "displacement_sculpt": ["DISPSculpt"]
+                },
+                "texture_colorspace": {
+                    "srgb": ["sRGB"],
+                    "acescg": ["ACEScg"],
+                    "raw": ["RAW"]
+                }
+            },
+            "tags": {
+                "published": {"explicit": false, "alias": []},
+                "deprecated": {"explicit": true, "alias": []},
+                "pending": {"explicit": false, "alias": []},
+                "approved": {"explicit": false, "alias": []},
+                "locked": {"explicit": true, "alias": []},
+                "official": {"explicit": false, "alias": ["published", "latest"]},
+                "wip": {"explicit": false, "alias": ["pending.*"]},
+                "final": {"explicit": false, "alias": ["approved", "published"]}
+            }
+        }
+    }
+}

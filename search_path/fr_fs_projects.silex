@@ -1,0 +1,435 @@
+{
+    "uid": "files.projects",
+    "import": ["./common", "./silex_core"],
+    "pattern": "(([a-zA-Z]:)|(\\\\[^\\\\]+\\\\[^\\\\]+))([\\\\/][^\\\\/:*?\"<>|]+)*", // matches Windows/Linux filepaths including UNC paths
+    "root_path": "${FR_ASSET_API_SILEX_ROOT}/",
+    "segmenter": "silex.FilesystemSegmenter",
+    "context_filters": [
+        {
+            "context.project": ".*"
+        }
+    ],
+    "paths": {
+        "project": {
+            "pattern": "(FR[0-9]*_)?(.*)",
+            "endpoint": "context.project",
+            "parse": {
+                "expressions": [
+                    "$lower({group[2]})->project"
+                ],
+                "targets": {
+                    "context.project": "project",
+                    "project.code": {
+                        "group": 2
+                    },
+                    "project.name": {
+                        "group": 0
+                    }
+                }
+            },
+            "format": "$glob(FR*_{context.project}, {context.project})",
+            "paths": {
+                "production_dir": {
+                    "is_intermediate": true,
+                    "pattern": "(?i)((03)[_\\. ]*)?Production",
+                    "format": "$glob(03_Production, Production)",
+                    "paths": {
+                        "tree": {
+                            "options": ["assets", "shots"],
+                            "format": "$title({context.tree})",
+                            "parse": {
+                                "expressions": [
+                                    "$lower({value})->tree"
+                                ],
+                                "targets": {
+                                    "context.tree": "tree"
+                                }
+                            },
+                            "switch": [
+                                {
+                                    "value": "assets",
+                                    "paths": {
+                                        "asset_dir": {
+                                            "pattern": "[a-zA-Z0-9]+",
+                                            "target": "context.asset",
+                                            "format": "{context.asset}",
+                                            "parse": {
+                                                "expressions": [
+                                                    "$CC({value})->classification:0,asset:0--1",
+                                                    "$L({classification})->classification"
+                                                ],
+                                                "targets": {
+                                                    "context.classification": "classification",
+                                                    "context.asset": "asset"
+                                                }
+                                            },
+                                            "paths": {
+                                                "asset_variant": {
+                                                    "template": "asset_variant",
+                                                    "endpoint": "context.asset_variant",
+                                                    "paths": {
+                                                        "entity_dir": {
+                                                            "options": ["Scenefiles", "Entity"],
+                                                            "is_intermediate": true,
+                                                            "pattern": "(Scenefiles|Entity)",
+                                                            "format": "{option}",
+                                                            "switch": [
+                                                                {
+                                                                    "value": "Scenefiles",
+                                                                    "endpoint": "asset.scene",
+                                                                    "paths": {
+                                                                        "task_category": {
+                                                                            "pattern": "[a-zA-Z]+",
+                                                                            "target": "task.category",
+                                                                            "format": "$title({task.category})",
+                                                                            "paths": {
+                                                                                "task_name": {
+                                                                                    "pattern": "[a-zA-Z]+",
+                                                                                    "target": "task.name",
+                                                                                    "format": "$title({task.name})",
+                                                                                    "paths": {
+                                                                                        "prism_versioninfo": {
+                                                                                            "pattern": "^([^\\\\/:*?\"<>|]+)_([^\\\\/:*?\"<>|]+)_v([0-9]+)versioninfo\\.json$",
+                                                                                            "format": "{context.asset_variant}_{task.name}_v{file.version:04d}versioninfo.json",
+                                                                                            "parse": {
+                                                                                                "targets": {
+                                                                                                    "context.asset_variant": {
+                                                                                                        "group": 1
+                                                                                                    },
+                                                                                                    "task.name": {
+                                                                                                        "group": 2
+                                                                                                    },
+                                                                                                    "file.version": {
+                                                                                                        "group": 3,
+                                                                                                        "type": "int"
+                                                                                                    }
+                                                                                                }
+                                                                                            },
+                                                                                            "endpoint": "asset.prism.versioninfo"
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "value": "Entity",
+                                                                    "endpoint": "asset.entity",
+                                                                    "paths": {
+                                                                        "fragment": {
+                                                                            "pattern": "[a-zA-Z_]+",
+                                                                            "format": "{entity.fragment}",
+                                                                            "target": "entity.fragment",
+                                                                            "paths": {
+                                                                                "version": {
+                                                                                    "pattern": "v([0-9]{3,4})",
+                                                                                    "format": "$glob_tag(v%TAG%, {entity.fragment_version}, 3, entity.fragment_version)",
+                                                                                    "write_update_keys": ["entity.fragment_version"],
+                                                                                    "target": "entity.fragment_version"
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "classification": {
+                                            "is_deprecated": true,
+                                            "pattern": "[a-zA-Z]+",
+                                            "target": "context.classification",
+                                            "format": "$title({context.classification})",
+                                            "parse": {
+                                                "expressions": [
+                                                    "$L({value})->classification"
+                                                ],
+                                                "targets": {
+                                                    "context.classification": "classification"
+                                                }
+                                            },
+                                            "paths": {
+                                                "asset_variant": {
+                                                    "template": "asset_variant",
+                                                    "endpoint": "context.asset_variant",
+                                                    "is_deprecated": true,
+                                                    "is_readonly": true,
+                                                    "paths": {
+                                                        "entity_dir": {
+                                                            "options": ["Scenefiles", "Entity"],
+                                                            "is_intermediate": true,
+                                                            "pattern": "(Scenefiles|Entity)",
+                                                            "format": "{option}",
+                                                            "switch": [
+                                                                {
+                                                                    "value": "Scenefiles",
+                                                                    "endpoint": "asset.scene",
+                                                                    "paths": {
+                                                                        "task_category": {
+                                                                            "pattern": "[a-zA-Z]+",
+                                                                            "target": "task.category",
+                                                                            "format": "$title({task.category})",
+                                                                            "paths": {
+                                                                                "task_name": {
+                                                                                    "pattern": "[a-zA-Z]+",
+                                                                                    "target": "task.name",
+                                                                                    "format": "$title({task.name})",
+                                                                                    "paths": {
+                                                                                        "prism_versioninfo": {
+                                                                                            "pattern": "^([^\\\\/:*?\"<>|]+)_([^\\\\/:*?\"<>|]+)_v([0-9]+)versioninfo\\.json$",
+                                                                                            "format": "{context.asset_variant}_{task.name}_v{file.version:04d}versioninfo.json",
+                                                                                            "parse": {
+                                                                                                "targets": {
+                                                                                                    "context.asset_variant": {
+                                                                                                        "group": 1
+                                                                                                    },
+                                                                                                    "task.name": {
+                                                                                                        "group": 2
+                                                                                                    },
+                                                                                                    "file.version": {
+                                                                                                        "group": 3,
+                                                                                                        "type": "int"
+                                                                                                    }
+                                                                                                }
+                                                                                            },
+                                                                                            "endpoint": "asset.prism.versioninfo"
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "value": "Entity",
+                                                                    "endpoint": "asset.entity",
+                                                                    "paths": {
+                                                                        "fragment": {
+                                                                            "pattern": "[a-zA-Z_]+",
+                                                                            "format": "{entity.fragment}",
+                                                                            "target": "entity.fragment",
+                                                                            "paths": {
+                                                                                "version": {
+                                                                                    "pattern": "v([0-9]{3,4})",
+                                                                                    "format": "$glob_tag(v%TAG%, {entity.fragment_version}, 3, entity.fragment_version)",
+                                                                                    "write_update_keys": ["entity.fragment_version"],
+                                                                                    "target": "entity.fragment_version"
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "asset_lookup": {
+                                            "is_readonly": true,
+                                            "pattern": "\\*",
+                                            "format": "*",
+                                            "paths": {
+                                                "asset_variant_lookup": {
+                                                    "pattern": "[A-Za-z0-9_-]+",
+                                                    "endpoint": "asset.entity",
+                                                    "target": "context.asset_variant",
+                                                    "format": "{context.asset_variant}"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "value": "shots",
+                                    "paths": {
+                                        "sequence": {
+                                            "endpoint": "context.sequence",
+                                            "pattern": "[a-z0-9_-]+",
+                                            "target": "context.sequence",
+                                            "format": "{context.sequence}",
+                                            "paths": {
+                                                "shot": {
+                                                    "endpoint": "context.shot",
+                                                    "pattern": "[a-z0-9_-]+",
+                                                    "target": "context.shot",
+                                                    "format": "{context.shot}",
+                                                    "paths": {
+                                                        "content": {
+                                                            "options": [
+                                                                "work",
+                                                                "Scenefiles",
+                                                                "publish"
+                                                            ],
+                                                            "is_intermediate": true,
+                                                            "pattern": "(work|Scenefiles|publish)",
+                                                            "format": "{content}",
+                                                            "switch": [
+                                                                {
+                                                                    "value": "work",
+                                                                    "paths": {
+                                                                        "task_category": {
+                                                                            "pattern": "[a-zA-Z]+",
+                                                                            "format": "$title({task.category})",
+                                                                            "target": "task.category",
+                                                                            "paths": {
+                                                                                "task_name": {
+                                                                                    "pattern": "[a-zA-Z]+",
+                                                                                    "format": "$title({task.name})",
+                                                                                    "target": "task.name",
+                                                                                    "paths": {
+                                                                                        "user": {
+                                                                                            "pattern": ".*",
+                                                                                            "format": "{user}",
+                                                                                            "target": "user",
+                                                                                            "paths": {
+                                                                                                "take": {
+                                                                                                    "pattern": "v([0-9]+)\\.t([0-9]+)",
+                                                                                                    "format": "v{take.version:03d}.t{take.take:02d}",
+                                                                                                    "targets": {
+                                                                                                        "take.version": {
+                                                                                                            "group": 1,
+                                                                                                            "type": "int"
+                                                                                                        },
+                                                                                                        "take.take": {
+                                                                                                            "group": 2,
+                                                                                                            "type": "int"
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "value": "Scenefiles",
+                                                                    "paths": {
+                                                                        "task_category_dir": {
+                                                                            "pattern": "([0-9]+\\. )?([a-zA-Z]+)",
+                                                                            "format": "4. {task.category}",
+                                                                            "parse": {
+                                                                                "targets": {
+                                                                                    "task.category": {
+                                                                                        "group": 2
+                                                                                    }
+                                                                                }
+                                                                            },
+                                                                            "paths": {
+                                                                                "task_name": {
+                                                                                    "pattern": "[a-zA-Z]+",
+                                                                                    "format": "{task.name}",
+                                                                                    "target": "task.name",
+                                                                                    "paths": {
+                                                                                        "prism_versioninfo": {
+                                                                                            "pattern": "^([a-z0-9_-]+)-([a-z0-9_-]+)_([a-zA-Z]+)_v([0-9]+)versioninfo\\.json$",
+                                                                                            "format": "{context.sequence}-{context.shot}_{task.name}_v{file.version:04d}versioninfo.json",
+                                                                                            "parse": {
+                                                                                                "targets": {
+                                                                                                    "context.sequence": {
+                                                                                                        "group": 1
+                                                                                                    },
+                                                                                                    "context.shot": {
+                                                                                                        "group": 2
+                                                                                                    },
+                                                                                                    "task.name": {
+                                                                                                        "group": 3
+                                                                                                    },
+                                                                                                    "file.version": {
+                                                                                                        "group": 4,
+                                                                                                        "type": "int"
+                                                                                                    }
+                                                                                                }
+                                                                                            },
+                                                                                            "endpoint": "shot.prism.versioninfo"
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "value": "publish",
+                                                                    "paths": {
+                                                                        "entity_dir": {
+                                                                            "is_intermediate": true,
+                                                                            "pattern": "Entity",
+                                                                            "format": "Entity",
+                                                                            "paths": {
+                                                                                "shot_source_asset": {
+                                                                                    "pattern": "[a-zA-Z0-9_-]+",
+                                                                                    "format": "{context.source_asset}",
+                                                                                    "target": "context.source_asset",
+                                                                                    "paths": {
+                                                                                        "shot_entity": {
+                                                                                            "pattern": "[a-zA-Z0-9_-]+",
+                                                                                            "format": "{entity.entity}",
+                                                                                            "target": "entity.entity",
+                                                                                            "endpoint": "shot.entity",
+                                                                                            "paths": {
+                                                                                                "shot_fragment": {
+                                                                                                    "pattern": "[a-zA-Z0-9_-]+",
+                                                                                                    "format": "{entity.fragment}",
+                                                                                                    "target": "entity.fragment",
+                                                                                                    "endpoint": "shot.entity.fragment",
+                                                                                                    "paths": {
+                                                                                                        "version": {
+                                                                                                            "pattern": "v([0-9]{3,4})",
+                                                                                                            "format": "$glob_tag(v%TAG%, {entity.fragment_version}, 3, entity.fragment_version)",
+                                                                                                            "write_update_keys": ["entity.fragment_version"],
+                                                                                                            "target": "entity.fragment_version",
+                                                                                                            "endpoint": "shot.entity.fragment.version",
+                                                                                                            "paths": {
+                                                                                                                "metadata": {
+                                                                                                                    "pattern": "fragment\\.fasset",
+                                                                                                                    "format": "fragment.fasset",
+                                                                                                                    "endpoint": "shot.entity.fragment.metadata"
+                                                                                                                }
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                "shot_source_asset_lookup": {
+                                                                                    "is_readonly": true,
+                                                                                    "pattern": "\\*",
+                                                                                    "format": "*",
+                                                                                    "paths": {
+                                                                                        "shot_entity": {
+                                                                                            "pattern": "[a-zA-Z0-9_-]+",
+                                                                                            "format": "{entity.entity}",
+                                                                                            "target": "entity.entity",
+                                                                                            "endpoint": "shot.entity"
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,64 @@
+{
+    "uid": "example.dir.shot_publish",
+    "import": ["./common"],
+    "pattern": ".*Shots.*publish.*",
+    "root_path": "X:/Projects",
+    "segmenter": "silex.FilesystemSegmenter",
+    "paths": {
+        "project": {
+            "pattern": "[A-Z0-9_]+",
+            "target": "context.project",
+            "format": "{context.project}",
+            "paths": {
+                "production": {
+                    "pattern": "03_Production",
+                    "format": "03_Production",
+                    "paths": {
+                        "shots": {
+                            "pattern": "Shots",
+                            "format": "Shots",
+                            "paths": {
+                                "sequence": {
+                                    "pattern": "[0-9]+",
+                                    "target": "context.sequence",
+                                    "format": "{context.sequence}",
+                                    "paths": {
+                                        "shot": {
+                                            "template": "shot_segment",
+                                            "endpoint": "context.shot",
+                                            "paths": {
+                                                "publish": {
+                                                    "pattern": "publish",
+                                                    "format": "publish",
+                                                    "paths": {
+                                                        "entity": {
+                                                            "pattern": "[A-Za-z0-9_-]+",
+                                                            "target": "entity.name",
+                                                            "format": "{entity.name}",
+                                                            "paths": {
+                                                                "version": {
+                                                                    "pattern": "v([0-9]{3})",
+                                                                    "format": "v{entity.version:03d}",
+                                                                    "parse": {
+                                                                        "targets": {
+                                                                            "entity.version": {"group": 1, "type": "int"}
+                                                                        }
+                                                                    },
+                                                                    "endpoint": "shot.publish.version"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

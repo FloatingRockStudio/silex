@@ -1,0 +1,7 @@
+{
+    "uid": "test.basic",
+    "pattern": "[\\/]basic[\\/].*",
+    "root_path": "./data",
+    "context_filters": [{"project.code": "TEST"}],
+    "segmenter": "silex.impl.segmenters.FilesystemSegmenter"
+}

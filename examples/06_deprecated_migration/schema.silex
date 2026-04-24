@@ -1,0 +1,41 @@
+{
+    "uid": "example.dir.migration",
+    "pattern": ".*assets.*",
+    "root_path": "/show/assets",
+    "segmenter": "silex.FilesystemSegmenter",
+    "paths": {
+        "asset": {
+            "pattern": "[A-Za-z0-9_]+",
+            "target": "context.asset",
+            "format": "{context.asset}",
+            "paths": {
+                "canonical_work": {
+                    "pattern": "work",
+                    "format": "work",
+                    "endpoint": "asset.work",
+                    "paths": {
+                        "task": {
+                            "pattern": "[a-z]+",
+                            "target": "task.name",
+                            "format": "{task.name}"
+                        }
+                    }
+                },
+                "legacy_scenefiles": {
+                    "pattern": "Scenefiles",
+                    "format": "Scenefiles",
+                    "endpoint": "asset.legacy_scene",
+                    "is_deprecated": true,
+                    "is_readonly": true,
+                    "paths": {
+                        "task": {
+                            "pattern": "[a-z]+",
+                            "target": "task.name",
+                            "format": "{task.name}"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

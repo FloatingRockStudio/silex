@@ -1,0 +1,33 @@
+{
+    "uid": "files.project.testpipe",
+    "inherits": "files.project",
+    "pattern": "^.*[\\\\/]+TESTPIPE(?:[\\\\/][^\\\\/:*?\"<>|]+)+$",
+    "root_path": "../search_dir",
+    "context_filters": [
+        {
+            "project.code": "TESTPIPE"
+        }
+    ],
+    "overrides": {
+        "project": {
+            "cascade": "update",
+            "pattern": "TESTPIPE",
+            "parse": {
+                "targets": {
+                    "context.project": "value",
+                    "project.code": "value",
+                    "project.name": "value"
+                }
+            },
+            "format": "TESTPIPE",
+        },
+        "context.shot": {
+            // Replace will preserve child paths but replace all other values from inheritance
+            // This allows us to keep the sequence/shot structure from the parent schema
+            "cascade": "replace",
+            "pattern": "00[0-9]+",
+            "target": "context.shot",
+            "format": "{context.shot}"
+        }
+    }
+}

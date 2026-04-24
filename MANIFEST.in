@@ -1,0 +1,12 @@
+include LICENSE
+include README.md
+include CMakeLists.txt
+include requirements-build.txt
+include requirements-dev.txt
+include requirements-docs.txt
+recursive-include docs *.md *.in
+recursive-include examples *.py *.md *.silex
+recursive-include schema *
+recursive-include search_path *
+recursive-include source *.h *.hpp *.c *.cc *.cpp *.cmake CMakeLists.txt
+recursive-include tests *.py *.cpp *.h *.json *.txt *.silex

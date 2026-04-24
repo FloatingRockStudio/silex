@@ -1,0 +1,13 @@
+{
+    "templates": {
+        "version_segment": {
+            "pattern": "v([0-9]{3,4})",
+            "format": "v{file.version:04d}",
+            "parse": {
+                "targets": {
+                    "file.version": {"group": 1, "type": "int"}
+                }
+            }
+        }
+    }
+}

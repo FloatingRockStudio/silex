@@ -1,0 +1,409 @@
+{
+    "uid": "test.uri.resolver",
+    "import": ["./common"],
+    "root_path": "FRA://",
+
+    "segmenters": [
+        "silex.impl.segmenters.uri.URISegmenter",
+        "silex.impl.segmenters.uri.QueryParamsSegmenter"
+    ],
+
+    "pattern": "FRA://.*",
+    "segmenter": "silex.impl.segmenters.uri.URISegmenter",
+
+    "paths": {
+        "uri_context": {
+            "pattern": "(asset_entity|asset_component|sequence|shot)",
+            "parse": {
+                "targets": {
+                    "uri.context": {
+                        "group": 1
+                    }
+                }
+            },
+            "format": "{uri.context}",
+            "switch": [
+                {
+                    "value": "asset_entity",
+                    "paths": {
+                        "project": {
+                            "pattern": "[A-Z0-9]+",
+                            "parse": {
+                                "targets": {
+                                    "context.project": {
+                                        "group": 0
+                                    }
+                                }
+                            },
+                            "format": "{context.project}",
+                            "paths": {
+                                "entity": {
+                                    "pattern": "[a-zA-Z0-9]+",
+                                    "parse": {
+                                        "targets": {
+                                            "context.entity": {
+                                                "group": 0
+                                            }
+                                        }
+                                    },
+                                    "format": "{context.entity}",
+                                    "paths": {
+                                        "fragment": {
+                                            "pattern": "[a-zA-Z0-9]+",
+                                            "parse": {
+                                                "targets": {
+                                                    "context.fragment": {
+                                                        "group": 0
+                                                    }
+                                                }
+                                            },
+                                            "format": "{context.fragment}",
+                                            "paths": {
+                                                "component": {
+                                                    "endpoint": "asset_entity",
+                                                    "pattern": "[a-zA-Z0-9]+",
+                                                    "parse": {
+                                                        "targets": {
+                                                            "context.component": {
+                                                                "group": 0
+                                                            }
+                                                        }
+                                                    },
+                                                    "format": "{context.component}",
+                                                    "paths": {
+                                                        "query_params": {
+                                                            "pattern": "\\?(.+)",
+                                                            "partition_segmenter": "silex.impl.segmenters.uri.QueryParamsSegmenter",
+                                                            "partitions": [
+                                                                {
+                                                                    "name": "version_param",
+                                                                    "pattern": "v=([0-9]+)",
+                                                                    "parse": {
+                                                                        "targets": {
+                                                                            "options.version": {
+                                                                                "group": 1,
+                                                                                "type": "int"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "format": "v={options.version}"
+                                                                },
+                                                                {
+                                                                    "name": "udim_param",
+                                                                    "pattern": "udim=([0-9]+)",
+                                                                    "parse": {
+                                                                        "targets": {
+                                                                            "options.udim": {
+                                                                                "group": 1
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "format": "udim={options.udim}"
+                                                                },
+                                                                {
+                                                                    "name": "ext_param",
+                                                                    "pattern": "ext=([a-zA-Z0-9]+)",
+                                                                    "parse": {
+                                                                        "targets": {
+                                                                            "options.ext": {
+                                                                                "group": 1
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "format": "ext={options.ext}"
+                                                                },
+                                                                {
+                                                                    "name": "tag_param",
+                                                                    "pattern": "tag=([a-zA-Z0-9]+)",
+                                                                    "parse": {
+                                                                        "targets": {
+                                                                            "options.tags": {
+                                                                                "group": 1,
+                                                                                "is_array": true
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "format": "tag={options.tags[*]}"
+                                                                },
+                                                                {
+                                                                    "name": "any_param",
+                                                                    "pattern": "([_a-zA-Z0-9]+)=([0-9]+)",
+                                                                    "parse": {
+                                                                        "targets": {
+                                                                            "options.{group[1]}": {
+                                                                                "group": 2
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "format": "$K=$V",
+                                                                    "is_fallback": true
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "value": "asset_component",
+                    "paths": {
+                        "project": {
+                            "pattern": "[A-Z0-9]+",
+                            "parse": {
+                                "targets": {
+                                    "context.project": {
+                                        "group": 0
+                                    }
+                                }
+                            },
+                            "format": "{context.project}",
+                            "paths": {
+                                "entity": {
+                                    "pattern": "[a-zA-Z0-9]+",
+                                    "parse": {
+                                        "targets": {
+                                            "context.entity": {
+                                                "group": 0
+                                            }
+                                        }
+                                    },
+                                    "format": "{context.entity}",
+                                    "paths": {
+                                        "fragment": {
+                                            "pattern": "[a-zA-Z0-9]+",
+                                            "parse": {
+                                                "targets": {
+                                                    "context.fragment": {
+                                                        "group": 0
+                                                    }
+                                                }
+                                            },
+                                            "format": "{context.fragment}",
+                                            "paths": {
+                                                "component": {
+                                                    "endpoint": "asset_component",
+                                                    "pattern": "[a-zA-Z0-9]+",
+                                                    "parse": {
+                                                        "targets": {
+                                                            "context.component": {
+                                                                "group": 0
+                                                            }
+                                                        }
+                                                    },
+                                                    "format": "{context.component}",
+                                                    "paths": {
+                                                        "query_params": {
+                                                            "pattern": "\\?(.+)",
+                                                            "partition_segmenter": "silex.impl.segmenters.uri.QueryParamsSegmenter",
+                                                            "partitions": [
+                                                                {
+                                                                    "name": "version_param",
+                                                                    "pattern": "v=([0-9]+)",
+                                                                    "parse": {
+                                                                        "targets": {
+                                                                            "options.version": {
+                                                                                "group": 1,
+                                                                                "type": "int"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "format": "v={options.version}"
+                                                                },
+                                                                {
+                                                                    "name": "udim_param",
+                                                                    "pattern": "udim=([0-9]+)",
+                                                                    "parse": {
+                                                                        "targets": {
+                                                                            "options.udim": {
+                                                                                "group": 1
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "format": "udim={options.udim}"
+                                                                },
+                                                                {
+                                                                    "name": "ext_param",
+                                                                    "pattern": "ext=([a-zA-Z0-9]+)",
+                                                                    "parse": {
+                                                                        "targets": {
+                                                                            "options.ext": {
+                                                                                "group": 1
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "format": "ext={options.ext}"
+                                                                },
+                                                                {
+                                                                    "name": "tag_param",
+                                                                    "pattern": "tag=([a-zA-Z0-9]+)",
+                                                                    "parse": {
+                                                                        "targets": {
+                                                                            "options.tags": {
+                                                                                "group": 1,
+                                                                                "is_array": true
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "format": "tag={options.tags[*]}"
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "value": "sequence",
+                    "paths": {
+                        "project": {
+                            "pattern": "[A-Z0-9]+",
+                            "parse": {
+                                "targets": {
+                                    "context.project": {
+                                        "group": 0
+                                    }
+                                }
+                            },
+                            "format": "{context.project}",
+                            "paths": {
+                                "sequence_name": {
+                                    "endpoint": "sequence",
+                                    "pattern": "[a-zA-Z0-9]+",
+                                    "parse": {
+                                        "targets": {
+                                            "context.sequence": {
+                                                "group": 0
+                                            }
+                                        }
+                                    },
+                                    "format": "{context.sequence}",
+                                    "paths": {
+                                        "query_params": {
+                                            "pattern": "\\?(.+)",
+                                            "partition_segmenter": "silex.impl.segmenters.uri.QueryParamsSegmenter",
+                                            "partitions": [
+                                                {
+                                                    "name": "version_param",
+                                                    "pattern": "v=([0-9]+)",
+                                                    "parse": {
+                                                        "targets": {
+                                                            "options.version": {
+                                                                "group": 1,
+                                                                "type": "int"
+                                                            }
+                                                        }
+                                                    },
+                                                    "format": "v={options.version}"
+                                                },
+                                                {
+                                                    "name": "status_param",
+                                                    "pattern": "status=([a-zA-Z]+)",
+                                                    "parse": {
+                                                        "targets": {
+                                                            "options.status": {
+                                                                "group": 1
+                                                            }
+                                                        }
+                                                    },
+                                                    "format": "status={options.status}"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "value": "shot",
+                    "paths": {
+                        "project": {
+                            "pattern": "[A-Z0-9]+",
+                            "parse": {
+                                "targets": {
+                                    "context.project": {
+                                        "group": 0
+                                    }
+                                }
+                            },
+                            "format": "{context.project}",
+                            "paths": {
+                                "sequence": {
+                                    "pattern": "[a-zA-Z0-9]+",
+                                    "parse": {
+                                        "targets": {
+                                            "context.sequence": {
+                                                "group": 0
+                                            }
+                                        }
+                                    },
+                                    "format": "{context.sequence}",
+                                    "paths": {
+                                        "shot_name": {
+                                            "endpoint": "shot",
+                                            "pattern": "[a-zA-Z0-9]+",
+                                            "parse": {
+                                                "targets": {
+                                                    "context.shot": {
+                                                        "group": 0
+                                                    }
+                                                }
+                                            },
+                                            "format": "{context.shot}",
+                                            "paths": {
+                                                "query_params": {
+                                                    "pattern": "\\?(.+)",
+                                                    "partition_segmenter": "silex.impl.segmenters.uri.QueryParamsSegmenter",
+                                                    "partitions": [
+                                                        {
+                                                            "name": "frame_param",
+                                                            "pattern": "frame=([0-9]+)",
+                                                            "parse": {
+                                                                "targets": {
+                                                                    "options.frame": {
+                                                                        "group": 1,
+                                                                        "type": "int"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "format": "frame={options.frame}"
+                                                        },
+                                                        {
+                                                            "name": "task_param",
+                                                            "pattern": "task=([a-zA-Z]+)",
+                                                            "parse": {
+                                                                "targets": {
+                                                                    "options.task": {
+                                                                        "group": 1
+                                                                    }
+                                                                }
+                                                            },
+                                                            "format": "task={options.task}"
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,62 @@
+{
+    "import": ["./silex_core"],
+    "aliases": {
+        "CC": "silex.impl.functors.case_split.SplitCamelCaseFunctor",
+        "L": "silex.LexiconFunctor",
+        "lower": "silex.impl.functors.case_conversion.ConvertLowerCaseFunctor"
+    },
+    "templates": {
+        "version_segment": {
+            "pattern": "v([0-9]{4})",
+            "format": "v{task.version:04d}",
+            "parse": {
+                "targets": {
+                    "task.version": {"group": 1, "type": "int"}
+                }
+            }
+        },
+        "asset_variant": {
+            "pattern": "[A-Za-z0-9]+",
+            "write_update_keys": [
+                "context.asset_variant",
+                "context.asset",
+                "context.variant",
+                "context.classification"
+            ],
+            "format": [
+                {
+                    "expression": "{context.asset_variant}",
+                    "when": {"key": "context.asset_variant", "exists": true}
+                },
+                {
+                    "expression": "$CC({context.asset}, {context.variant})",
+                    "when": {"keys": ["context.asset", "context.variant"], "exists": true}
+                }
+            ],
+            "parse": {
+                "expressions": [
+                    "$CC({value})->classification_token:0,asset:0--2,variant:-1:?",
+                    "$L({classification_token})->classification",
+                    "$lower({variant})->variant"
+                ],
+                "targets": {
+                    "context.asset_variant": "value",
+                    "context.asset": "asset",
+                    "context.variant": "variant",
+                    "context.classification": "classification"
+                }
+            }
+        }
+    },
+    "config": {
+        "variables": {
+            "lexicon": {
+                "classification": {
+                    "character": ["chr", "character"],
+                    "prop": ["prp", "prop"],
+                    "environment": ["env", "environment"]
+                }
+            }
+        }
+    }
+}

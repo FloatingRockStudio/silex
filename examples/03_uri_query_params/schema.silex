@@ -1,0 +1,75 @@
+{
+    "uid": "example.dir.uri",
+    "root_path": "FRA://",
+    "pattern": "(?i)FRA://.*",
+    "segmenters": [
+        "silex.URISegmenter",
+        "silex.QueryParamsSegmenter"
+    ],
+    "segmenter": "silex.URISegmenter",
+    "paths": {
+        "resource_type": {
+            "pattern": "(asset|shot)",
+            "format": "{uri.resource_type}",
+            "parse": {
+                "targets": {
+                    "uri.resource_type": {"group": 1}
+                }
+            },
+            "paths": {
+                "project": {
+                    "pattern": "[A-Z0-9_]+",
+                    "target": "context.project",
+                    "format": "{context.project}",
+                    "paths": {
+                        "entity": {
+                            "pattern": "[A-Za-z0-9_]+",
+                            "target": "context.entity",
+                            "format": "{context.entity}",
+                            "endpoint": "uri.entity",
+                            "paths": {
+                                "query": {
+                                    "pattern": "\\?(.+)",
+                                    "partition_segmenter": "silex.QueryParamsSegmenter",
+                                    "partitions": [
+                                        {
+                                            "name": "version_param",
+                                            "pattern": "v=([0-9]+)",
+                                            "format": "v={options.version}",
+                                            "parse": {
+                                                "targets": {
+                                                    "options.version": {"group": 1, "type": "int"}
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "name": "tag_param",
+                                            "pattern": "tag=([^&]+)",
+                                            "format": "tag={options.tags[*]}",
+                                            "parse": {
+                                                "targets": {
+                                                    "options.tags": {"group": 1, "is_array": true}
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "name": "any_param",
+                                            "pattern": "([_a-zA-Z0-9]+)=([^&]+)",
+                                            "format": "$K=$V",
+                                            "parse": {
+                                                "targets": {
+                                                    "options.{group[1]}": {"group": 2}
+                                                }
+                                            },
+                                            "is_fallback": true
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,70 @@
+{
+    "uid": "example.dir.asset_uri",
+    "root_path": "FRA://",
+    "pattern": "(?i)FRA://asset/.*",
+    "segmenters": [
+        "silex.URISegmenter",
+        "silex.QueryParamsSegmenter"
+    ],
+    "segmenter": "silex.URISegmenter",
+    "paths": {
+        "asset_literal": {
+            "pattern": "asset",
+            "format": "asset",
+            "paths": {
+                "project": {
+                    "pattern": "[A-Z0-9_]+",
+                    "target": "context.project",
+                    "format": "{context.project}",
+                    "paths": {
+                        "asset_variant": {
+                            "pattern": "[A-Za-z0-9_]+",
+                            "target": "context.asset_variant",
+                            "format": "{context.asset_variant}",
+                            "endpoint": "uri.asset",
+                            "paths": {
+                                "query": {
+                                    "pattern": "\\?(.+)",
+                                    "partition_segmenter": "silex.QueryParamsSegmenter",
+                                    "partitions": [
+                                        {
+                                            "name": "version",
+                                            "pattern": "version=([0-9]+)",
+                                            "format": "version={options.version}",
+                                            "parse": {
+                                                "targets": {
+                                                    "options.version": {"group": 1, "type": "int"}
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "name": "task",
+                                            "pattern": "task=([^&]+)",
+                                            "format": "task={task.name}",
+                                            "parse": {
+                                                "targets": {
+                                                    "task.name": {"group": 1}
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "name": "fallback",
+                                            "pattern": "([_a-zA-Z0-9]+)=([^&]+)",
+                                            "format": "$K=$V",
+                                            "parse": {
+                                                "targets": {
+                                                    "options.{group[1]}": {"group": 2}
+                                                }
+                                            },
+                                            "is_fallback": true
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,71 @@
+{
+    "functors": [
+        // Case conversion functors - detailed entries
+        {
+            "package": "silex",
+            "module": "silex.impl.functors.case_conversion",
+            "name": "ConvertLowerCaseFunctor",
+            "aliases": ["lower_case", "lowercase", "lower"],
+            "language": "python",
+        },
+        {
+            "package": "silex",
+            "module": "silex.impl.functors.case_conversion",
+            "name": "ConvertUpperCaseFunctor",
+            "aliases": ["upper_case", "uppercase"],
+            "language": "python",
+        },
+        {
+            "package": "silex",
+            "module": "silex.impl.functors.case_conversion",
+            "name": "ConvertTitleCaseFunctor",
+            "aliases": ["title_case", "titlecase", "title"],
+        },
+
+        // Case splitting functors - mixed detail levels
+        {
+            "package": "silex",
+            "module": "silex.impl.functors.case_split",
+            "name": "SplitCamelCaseFunctor",
+            "aliases": ["camelcase", "CC"],
+        },
+        {
+            "package": "silex",
+            "module": "silex.impl.functors.case_split",
+            "name": "SplitSnakeCaseFunctor",
+            "aliases": ["snakecase", "SC"],
+        },
+
+        // Utility functors
+        {
+            "module": "silex.impl.functors.glob",
+            "name": "GlobFunctor",
+            "aliases": ["glob"],
+            "language": "python",
+        },
+        {
+            "module": "silex.impl.functors.glob_tag",
+            "name": "GlobTagFunctor",
+            "aliases": ["glob_tag"],
+            "language": "python",
+        },
+        {
+            "package": "silex",
+            "module": "silex.impl.functors.lexicon",
+            "name": "LexiconFunctor",
+            "aliases": ["lexicon", "L"],
+        },
+    ],
+    // This expands to {"package": "silex", "module": "silex.impl.segmenters", "name": "FilesystemSegmenter"}
+    "segmenters": ["silex.impl.segmenters.FilesystemSegmenter"],
+    "aliases": {
+        "L": "silex.LexiconFunctor",
+        "title": "silex.impl.functors.case_conversion.ConvertTitleCaseFunctor",
+        "lower": "silex.impl.functors.case_conversion.ConvertLowerCaseFunctor",
+        "upper": "silex.impl.functors.case_conversion.ConvertUpperCaseFunctor",
+        "CC": "silex.impl.functors.case_split.SplitCamelCaseFunctor",
+        "SC": "silex.impl.functors.case_split.SplitSnakeCaseFunctor",
+        "glob": "silex.impl.functors.glob.GlobFunctor",
+        "glob_tag": "silex.impl.functors.glob_tag.GlobTagFunctor"
+    }
+}

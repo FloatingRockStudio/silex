@@ -1,0 +1,20 @@
+{
+    "uid": "example.dir.templates",
+    "import": ["./common"],
+    "pattern": ".*render.*",
+    "root_path": "/show/render",
+    "segmenter": "silex.FilesystemSegmenter",
+    "paths": {
+        "asset_variant": {
+            "template": "asset_variant",
+            "target": "context.asset_variant",
+            "endpoint": "asset.variant",
+            "paths": {
+                "version": {
+                    "template": "version_segment",
+                    "endpoint": "asset.variant.version"
+                }
+            }
+        }
+    }
+}

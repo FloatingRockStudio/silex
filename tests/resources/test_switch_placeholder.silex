@@ -1,0 +1,71 @@
+{
+    "uid": "test.switch.placeholder",
+    "pattern": ".*",
+    "root_path": "/project",
+    "segmenter": "silex.impl.segmenters.FilesystemSegmenter",
+    "context_filters": [],
+    "paths": {
+        "category": {
+            "pattern": "Assets",
+            "format": "Assets",
+            "paths": {
+                "classification": {
+                    "pattern": "[a-z]+",
+                    "format": "{context.classification}",
+                    "paths": {
+                        "asset_variant": {
+                            "pattern": "([a-z]{3})([A-Za-z0-9]+)",
+                            "format": "{context.asset_variant}",
+                            "write_update_keys": [
+                                "context.classification",
+                                "context.asset_variant"
+                            ],
+                            "parse": {
+                                "targets": {
+                                    "context.classification": {
+                                        "group": 1
+                                    },
+                                    "context.asset_variant": "value"
+                                }
+                            },
+                            "endpoint": "context.asset_variant",
+                            "paths": {
+                                "entity_dir": {
+                                    "is_intermediate": true,
+                                    "pattern": "(Scenefiles|Entity)",
+                                    "format": "{option}",
+                                    "switch": [
+                                        {
+                                            "value": "Scenefiles",
+                                            "endpoint": "asset.scene"
+                                        },
+                                        {
+                                            "value": "Entity",
+                                            "endpoint": "asset.entity",
+                                            "paths": {
+                                                "fragment": {
+                                                    "pattern": "[A-Za-z]+",
+                                                    "format": "{entity.fragment}",
+                                                    "paths": {
+                                                        "version": {
+                                                            "pattern": "v([0-9]{3})",
+                                                            "format": "v{entity.fragment_version:03d}",
+                                                            "write_update_keys": [
+                                                                "entity.fragment_version"
+                                                            ],
+                                                            "endpoint": "asset.fragment.version"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

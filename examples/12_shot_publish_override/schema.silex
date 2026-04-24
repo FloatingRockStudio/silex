@@ -1,0 +1,11 @@
+{
+    "uid": "example.dir.shot_publish_override",
+    "inherits": "example.dir.shot_publish",
+    "pattern": ".*Shots.*(publish|delivery).*",
+    "overrides": {
+        "shots.*.shot.publish": {
+            "pattern": "delivery",
+            "format": "delivery"
+        }
+    }
+}

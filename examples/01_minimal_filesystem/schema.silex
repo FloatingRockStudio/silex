@@ -1,0 +1,50 @@
+{
+    "uid": "example.dir.filesystem",
+    "pattern": ".*projects.*",
+    "root_path": "/studio/projects",
+    "segmenter": "silex.FilesystemSegmenter",
+    "context_filters": [
+        {"context.project": ".*"}
+    ],
+    "paths": {
+        "project": {
+            "pattern": "[A-Z0-9_]+",
+            "endpoint": "context.project",
+            "target": "context.project",
+            "format": "{context.project}",
+            "paths": {
+                "assets_root": {
+                    "pattern": "assets",
+                    "format": "assets",
+                    "paths": {
+                        "asset": {
+                            "pattern": "[A-Za-z0-9_]+",
+                            "target": "context.asset",
+                            "format": "{context.asset}",
+                            "endpoint": "context.asset",
+                            "paths": {
+                                "task": {
+                                    "pattern": "[a-z]+",
+                                    "target": "task.name",
+                                    "format": "{task.name}",
+                                    "paths": {
+                                        "version": {
+                                            "pattern": "v([0-9]{3})",
+                                            "format": "v{task.version:03d}",
+                                            "parse": {
+                                                "targets": {
+                                                    "task.version": {"group": 1, "type": "int"}
+                                                }
+                                            },
+                                            "endpoint": "asset.task.version"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

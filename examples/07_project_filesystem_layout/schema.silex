@@ -1,0 +1,57 @@
+{
+    "uid": "example.dir.project_layout",
+    "import": ["./common"],
+    "pattern": ".*Projects.*",
+    "root_path": "X:/Projects",
+    "segmenter": "silex.FilesystemSegmenter",
+    "paths": {
+        "project": {
+            "pattern": "(FR[0-9]*_)?([A-Za-z0-9_]+)",
+            "target": "context.project",
+            "endpoint": "context.project",
+            "format": "{context.project}",
+            "parse": {
+                "targets": {
+                    "context.project": {"group": 2}
+                }
+            },
+            "paths": {
+                "production": {
+                    "pattern": "(?i)((03)[_\\. ]*)?Production",
+                    "format": "03_Production",
+                    "paths": {
+                        "tree": {
+                            "pattern": "(Assets|Shots)",
+                            "format": "{context.tree}",
+                            "parse": {
+                                "targets": {
+                                    "context.tree": {"group": 1}
+                                }
+                            },
+                            "paths": {
+                                "entity": {
+                                    "pattern": "[A-Za-z0-9_-]+",
+                                    "target": "context.entity",
+                                    "format": "{context.entity}",
+                                    "paths": {
+                                        "task": {
+                                            "pattern": "[A-Za-z]+",
+                                            "target": "task.name",
+                                            "format": "{task.name}",
+                                            "paths": {
+                                                "version": {
+                                                    "template": "version_segment",
+                                                    "endpoint": "project.entity.task.version"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,194 @@
+{
+    "uid": "files.project",
+    "import": ["./common", "silex_core"],
+    "root_path": "../search_dir",
+    // Since this is registered in silex_core we can refer to it by package.name or just name
+    "segmenter": "silex.FilesystemSegmenter",
+    "pattern": "(([a-zA-Z]:)|(\\\\[^\\\\]+\\\\[^\\\\]+))([\\\\/][^\\\\/:*?\"<>|]+)*", // matches Windows/Linux filepaths including UNC paths
+    // Specifying context filters allows to quickly filter what schemas might be valid for the context
+    "context_filters": [
+        {
+            "project.code": ".*"
+        }
+    ],
+    "aliases": {
+        "title": "silex.impl.functors.case_conversion.ConvertTitleCaseFunctor",
+        "lower": "silex.impl.functors.case_conversion.ConvertLowerCaseFunctor",
+    },
+    "templates": {
+        "asset_variant": {
+            "pattern": "[a-zA-Z0-9]+",
+            "format": "$CC($L(classification, {context.classification}), {context.asset}, {context.variant})",
+            "parse": {
+                "expressions": [
+                    "$CC({value})->classification:0,asset,variant:-1:?",
+                    "$L({classification})->classification",
+                    "$lower({asset})->asset",
+                    "$lower({variant})->variant"
+                ],
+                "targets": {
+                    "context.classification": "classification",
+                    "context.asset_variant": "value",
+                    "context.asset": "asset",
+                    "context.variant": "variant"
+                }
+            }
+        },
+    },
+    "paths": {
+        "project": {
+            "pattern": "(FR[0-9]*_)?(.*)",
+            "parse": {
+                "expressions": [
+                    "$lower({group[2]})->project"
+                ],
+                "targets": {
+                    "context.project": "project",
+                    "project.code": {
+                        "group": 2
+                    },
+                    "project.name": {
+                        "group": 0
+                    }
+                }
+            },
+            "format": "$glob({'FR*_'+context.project})",
+            "paths": {
+                "production_dir": {
+                    "is_intermediate": true,  // intermediate doesn't have targets and isn't referenced in endpoint uid paths
+                    "pattern": "([0-9]+_)?Production",
+                    "format": "$glob({'*_Production'})",
+                    "paths": {
+                        "tree": {
+                            "options": ["assets", "shots"], // case insensitive, essentially maps to expression=assets|shots
+                            "format": "$title({context.tree})",
+                            "parse": {
+                                "expressions": [
+                                    "$lower({value})->tree"
+                                ],
+                                "targets": {
+                                    "context.tree": "tree"
+                                }
+                            },
+                            "switch": [
+                                {
+                                    "value": "assets",  // switch case is case insensitive based on the option value not the target
+                                    "paths": {
+                                        "classification": {
+                                            "pattern": "[a-zA-Z][a-zA-Z0-9]+",
+                                            "format": "$title({classification})",
+                                            "parse": {
+                                                "expressions": [
+                                                    "$L({value})->classification"
+                                                ],
+                                                "targets": {
+                                                    "context.classification": "classification"
+                                                }
+                                            },
+                                            "paths": {
+                                                "asset_variant": {
+                                                    "template": "asset_variant",
+                                                    "endpoint": "context.asset_variant",
+                                                    "paths": {
+                                                        "entity_dir": {
+                                                            "pattern": "Entity",  // read and write become pattern
+                                                            "is_intermediate": true,
+                                                            "paths": {
+                                                                "fragment": {
+                                                                    "pattern": "[a-zA-Z]+",
+                                                                    "format": "{entity.fragment}",
+                                                                    "target": "entity.fragment",
+                                                                    "paths": {
+                                                                        "version": {
+                                                                            "pattern": "v([0-9]+)",
+                                                                            "format": "v{entity.version:04d}",
+                                                                            "parse": {
+                                                                                "targets": {
+                                                                                    "entity.version": {
+                                                                                        "group": 1,
+                                                                                        "type": "int",  // Converts to int
+                                                                                    }
+                                                                                }
+                                                                            },
+                                                                            "paths": {
+                                                                                "texture_file": {
+                                                                                    "endpoint": "asset.entity.texture",  // promotes for quick access
+                                                                                    "pattern": "([a-zA-Z0-9_]+)_([a-zA-Z]+)\\.([0-9]+)\\.([a-zA-Z]+)",
+                                                                                    "format": "{context.asset_variant}_{texture.type}.{texture.udim}.{texture.ext}",
+                                                                                    "parse": {
+                                                                                        "targets": {
+                                                                                            "context.asset_variant": {
+                                                                                                "group": 1
+                                                                                            },
+                                                                                            "texture.type": {
+                                                                                                "group": 2
+                                                                                            },
+                                                                                            "texture.udim": {
+                                                                                                "group": 3
+                                                                                            },
+                                                                                            "texture.ext": {
+                                                                                                "group": 4
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "value": "shots",
+                                    "paths": {
+                                        "sequence": {
+                                            "endpoint": "context.sequence",
+                                            "pattern": "[0-9]+",
+                                            "target":  "context.sequence",
+                                            "format": "{context.sequence}",
+                                            "paths": {
+                                                "shot": {
+                                                    "endpoint": "context.shot",
+                                                    "pattern": "[0-9]+",
+                                                    "target": "context.shot",
+                                                    "format": "{context.shot}",
+                                                    "paths": {
+                                                        "frame_file": {
+                                                            "endpoint": "shot.frame",
+                                                            "pattern": "([a-zA-Z0-9_]+)\\.([0-9]+)\\.([a-zA-Z]+)",
+                                                            "format": "{context.shot}_{context.task}.{frame:04d}.{file.ext}",
+                                                            "parse": {
+                                                                "targets": {
+                                                                    "context.shot": {
+                                                                        "group": 1
+                                                                    },
+                                                                    "frame": {
+                                                                        "group": 2,
+                                                                        "type": "int"
+                                                                    },
+                                                                    "file.ext": {
+                                                                        "group": 3
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

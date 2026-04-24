@@ -1,0 +1,45 @@
+{
+    "uid": "example.dir.custom_functor",
+    "pattern": ".*custom_functor.*",
+    "root_path": "/show/custom_functor",
+    "segmenter": "silex.FilesystemSegmenter",
+    "aliases": {
+        "sluglower": "example.custom.sluglower"
+    },
+    "functors": [
+        {
+            "uid": "example.custom.sluglower",
+            "name": "LowerSlugFunctor",
+            "module": "custom_functors",
+            "language": "python",
+            "aliases": ["sluglower"]
+        }
+    ],
+    "paths": {
+        "asset": {
+            "pattern": "[a-z0-9]+",
+            "endpoint": "asset.name",
+            "format": "$sluglower({context.asset})",
+            "parse": {
+                "expressions": [
+                    "$sluglower({value})->asset"
+                ],
+                "targets": {
+                    "context.asset": "asset"
+                }
+            },
+            "paths": {
+                "version": {
+                    "pattern": "v([0-9]{3})",
+                    "format": "v{task.version:03d}",
+                    "parse": {
+                        "targets": {
+                            "task.version": {"group": 1, "type": "int"}
+                        }
+                    },
+                    "endpoint": "asset.version"
+                }
+            }
+        }
+    }
+}

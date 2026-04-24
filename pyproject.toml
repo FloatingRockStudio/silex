@@ -1,0 +1,49 @@
+[build-system]
+requires = [
+    "scikit-build-core>=0.10",
+]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "silex"
+version = "0.4.1"
+description = "Schema-driven path and URI resolver with a C++17 core and pybind11 bindings"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Floating Rock Studio" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: C++",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Repository = "https://github.com/FloatingRockStudio/silex"
+Issues = "https://github.com/FloatingRockStudio/silex/issues"
+
+[tool.scikit-build]
+cmake.version = ">=3.20"
+cmake.args = [
+    "-DBUILD_TESTS=OFF",
+    "-DBUILD_PYTHON=ON",
+    "-DSILEX_PYTHON_WHEEL_LAYOUT=ON",
+]
+wheel.packages = []
+
+[tool.cibuildwheel]
+build = "cp39-* cp310-* cp311-*"
+skip = "*-musllinux_*"
+test-command = "python -c \"import silex; print(silex.__file__)\""
+

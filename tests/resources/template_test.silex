@@ -1,0 +1,47 @@
+{
+    "uid": "test.template",
+    "segmenter": "silex.impl.segmenters.FilesystemSegmenter",
+    "pattern": "[\\/]test[\\/].*",
+    "root_path": "./data",
+    "context_filters": [
+        {
+            "project.code": "TEMPLATE_TEST"
+        }
+    ],
+    "templates": {
+        "base_template": {
+            "pattern": "[a-zA-Z]+",
+            "format": "{base.value}",
+            "parse": {
+                "expressions": [
+                    "{value}->base_value"
+                ],
+                "targets": {
+                    "base.value": "base_value"
+                }
+            }
+        },
+        "derived_template": {
+            "template": "base_template",
+            "pattern": "[a-zA-Z0-9]+",
+            "format": "{derived.value}",
+            "parse": {
+                "expressions": [
+                    "{value}->derived_value"
+                ],
+                "targets": {
+                    "derived.value": "derived_value",
+                    "base.value": "base_value"
+                }
+            }
+        }
+    },
+    "paths": {
+        "base_segment": {
+            "template": "base_template"
+        },
+        "derived_segment": {
+            "template": "derived_template"
+        }
+    }
+}

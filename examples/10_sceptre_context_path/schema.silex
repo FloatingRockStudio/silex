@@ -1,0 +1,63 @@
+{
+    "uid": "example.dir.sceptre_context",
+    "root_path": "/",
+    "segmenter": "silex.FilesystemSegmenter",
+    "pattern": "/.*",
+    "context_filters": [
+        {
+            "context.project": ".*"
+        }
+    ],
+    "paths": {
+        "project": {
+            "pattern": "[A-Za-z0-9_]+",
+            "endpoint": "sceptre.context.project",
+            "target": "context.project",
+            "format": "{context.project}",
+            "paths": {
+                "tree": {
+                    "pattern": "(shots|assets)",
+                    "endpoint": "sceptre.context.tree",
+                    "format": "{context.tree}",
+                    "parse": {
+                        "targets": {
+                            "context.tree": {"group": 1}
+                        }
+                    },
+                    "switch": [
+                        {
+                            "value": "shots",
+                            "paths": {
+                                "sequence": {
+                                    "pattern": "[A-Za-z0-9_-]+",
+                                    "endpoint": "sceptre.context.sequence",
+                                    "target": "context.sequence",
+                                    "format": "{context.sequence}",
+                                    "paths": {
+                                        "shot": {
+                                            "pattern": "[A-Za-z0-9_-]+",
+                                            "endpoint": "sceptre.context.shot",
+                                            "target": "context.shot",
+                                            "format": "{context.shot}"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "value": "assets",
+                            "paths": {
+                                "asset_variant": {
+                                    "pattern": "[A-Za-z0-9]+",
+                                    "endpoint": "sceptre.context.asset_variant",
+                                    "target": "context.asset_variant",
+                                    "format": "{context.asset_variant}"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

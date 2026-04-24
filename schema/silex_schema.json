@@ -1,0 +1,501 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://silex.com/schema/silex_schema.json",
+    "title": "Silex Schema",
+    "description": "JSON Schema for validating Silex (.silex) configuration files",
+    "type": "object",
+    "$defs": {
+        "pattern_string": {
+            "type": "string",
+            "description": "Regular expression pattern"
+        },
+        "expression_string": {
+            "type": "string",
+            "description": "Silex expression string using functors and variables"
+        },
+        "context_path": {
+            "type": "string",
+            "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*(?:\\.[a-zA-Z_][a-zA-Z0-9_]*)*$",
+            "description": "Dot-separated context path like 'context.project' or 'entity.version'"
+        },
+        "module_path": {
+            "type": "string",
+            "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*(?:\\.[a-zA-Z_][a-zA-Z0-9_]*)*$",
+            "description": "Python module path like 'silex.impl.functors.case_conversion'"
+        },
+        "target_definition": {
+            "oneOf": [
+                {
+                    "type": "string",
+                    "description": "Simple target name"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "group": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Regex capture group number"
+                        },
+                        "type": {
+                            "type": "string",
+                            "enum": ["string", "int", "float", "bool"],
+                            "description": "Target value type conversion"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            ]
+        },
+        "condition_definition": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "$ref": "#/$defs/context_path",
+                    "description": "Context path to check (single key)"
+                },
+                "keys": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/context_path"
+                    },
+                    "description": "Multiple context paths to check (all must satisfy condition - AND logic)"
+                },
+                "exists": {
+                    "type": "boolean",
+                    "description": "Whether the key(s) should exist (true) or not exist (false)"
+                },
+                "pattern": {
+                    "type": "string",
+                    "description": "Regex pattern the value must match (future extension)"
+                },
+                "value": {
+                    "description": "Exact value to match (future extension)"
+                }
+            },
+            "oneOf": [
+                {
+                    "required": ["key"]
+                },
+                {
+                    "required": ["keys"]
+                }
+            ],
+            "additionalProperties": false
+        },
+        "conditional_expression": {
+            "type": "object",
+            "properties": {
+                "expressions": {
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "description": "Single expression string"
+                        },
+                        {
+                            "type": "array",
+                            "items": {"$ref": "#/$defs/expression_string"},
+                            "minItems": 1,
+                            "description": "List of expressions to process"
+                        }
+                    ]
+                },
+                "when": {
+                    "$ref": "#/$defs/condition_definition",
+                    "description": "Condition that must be met for these expressions to be evaluated"
+                }
+            },
+            "required": ["expressions"],
+            "additionalProperties": false
+        },
+        "parseformat_definition": {
+            "oneOf": [
+                {
+                    "type": "string",
+                    "description": "Simple expression string (convenience - maps to expressions array)"
+                },
+                {
+                    "type": "array",
+                    "items": {
+                        "oneOf": [
+                            {
+                                "type": "string",
+                                "description": "Simple expression string"
+                            },
+                            {
+                                "$ref": "#/$defs/conditional_expression",
+                                "description": "Conditional expression with when clause"
+                            }
+                        ]
+                    },
+                    "description": "List of expression strings or conditional expressions"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "expression": {
+                            "type": "string",
+                            "description": "Single expression string (legacy)"
+                        },
+                        "expressions": {
+                            "oneOf": [
+                                {
+                                    "type": "string",
+                                    "description": "Single expression string"
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {"$ref": "#/$defs/expression_string"},
+                                    "description": "List of expressions to process"
+                                }
+                            ],
+                            "description": "Expression(s) to process during read/write operations"
+                        },
+                        "targets": {
+                            "type": "object",
+                            "patternProperties": {
+                                "^[a-zA-Z_][a-zA-Z0-9_]*(?:\\.[a-zA-Z_][a-zA-Z0-9_]*)*$": {"$ref": "#/$defs/target_definition"}
+                            },
+                            "additionalProperties": false,
+                            "description": "Mapping of context paths to target definitions"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            ]
+        },
+        "functor_definition": {
+            "oneOf": [
+                {
+                    "type": "string",
+                    "description": "Simple module.ClassName string"
+                },
+                {
+                    "type": "object",
+                    "required": ["module", "name"],
+                    "properties": {
+                        "uid": {
+                            "type": "string",
+                            "description": "Unique identifier for the functor"
+                        },
+                        "package": {
+                            "type": "string",
+                            "description": "Package name"
+                        },
+                        "module": {"$ref": "#/$defs/module_path"},
+                        "name": {
+                            "type": "string",
+                            "description": "Class name"
+                        },
+                        "language": {
+                            "type": "string",
+                            "enum": ["python"],
+                            "default": "python"
+                        },
+                        "aliases": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "Alternative names for the functor"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            ]
+        },
+        "segmenter_definition": {
+            "oneOf": [
+                {
+                    "type": "string",
+                    "description": "Simple module.ClassName string"
+                },
+                {
+                    "type": "object",
+                    "required": ["module", "name"],
+                    "properties": {
+                        "uid": {
+                            "type": "string",
+                            "description": "Unique identifier for the segmenter"
+                        },
+                        "package": {
+                            "type": "string",
+                            "description": "Package name"
+                        },
+                        "module": {"$ref": "#/$defs/module_path"},
+                        "name": {
+                            "type": "string",
+                            "description": "Class name"
+                        },
+                        "language": {
+                            "type": "string",
+                            "enum": ["python"],
+                            "default": "python"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            ]
+        },
+        "template_definition": {
+            "type": "object",
+            "properties": {
+                "template": {
+                    "type": "string",
+                    "description": "Reference to another template to inherit from"
+                },
+                "pattern": {"$ref": "#/$defs/pattern_string"},
+                "format": {"$ref": "#/$defs/parseformat_definition"},
+                "parse": {"$ref": "#/$defs/parseformat_definition"},
+                "is_deprecated": {
+                    "type": "boolean",
+                    "description": "Whether this segment is deprecated for new usage"
+                },
+                "is_readonly": {
+                    "type": "boolean",
+                    "description": "Whether this segment can be read but should not be written"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": ["string", "number", "int", "float", "bool"]
+                },
+                "padding": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Zero-padding for numeric values"
+                },
+                "placeholder": {
+                    "type": "string",
+                    "description": "Placeholder pattern like '####'"
+                }
+            },
+            "additionalProperties": false
+        },
+        "switch_case": {
+            "type": "object",
+            "required": ["value"],
+            "properties": {
+                "value": {
+                    "type": "string",
+                    "description": "Case value to match against"
+                },
+                "paths": {"$ref": "#/$defs/paths_definition"}
+            },
+            "additionalProperties": false
+        },
+        "segment_definition": {
+            "type": "object",
+            "properties": {
+                "pattern": {"$ref": "#/$defs/pattern_string"},
+                "format": {"$ref": "#/$defs/parseformat_definition"},
+                "parse": {"$ref": "#/$defs/parseformat_definition"},
+                "target": {"$ref": "#/$defs/context_path"},
+                "endpoint": {"$ref": "#/$defs/context_path"},
+                "template": {
+                    "type": "string",
+                    "description": "Reference to a template definition"
+                },
+                "is_deprecated": {
+                    "type": "boolean",
+                    "description": "Whether this segment is deprecated for new usage"
+                },
+                "is_readonly": {
+                    "type": "boolean",
+                    "description": "Whether this segment can be read but should not be written"
+                },
+                "is_intermediate": {
+                    "type": "boolean",
+                    "description": "Whether this segment is intermediate (not referenced in endpoint paths)"
+                },
+                "is_fallback": {
+                    "type": "boolean",
+                    "description": "Whether this segment is only used if no others match (eg: query params default)"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Case-insensitive options that map to expressions"
+                },
+                "switch": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/switch_case"},
+                    "description": "Switch cases for conditional path resolution"
+                },
+                "paths": {"$ref": "#/$defs/paths_definition"}
+            },
+            "additionalProperties": false
+        },
+        "paths_definition": {
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z_][a-zA-Z0-9_]*$": {"$ref": "#/$defs/segment_definition"}
+            },
+            "additionalProperties": false
+        },
+        "context_filter": {
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z_][a-zA-Z0-9_]*(?:\\.[a-zA-Z_][a-zA-Z0-9_]*)*$": {
+                    "type": "string",
+                    "description": "Regular expression pattern for context filtering"
+                }
+            },
+            "additionalProperties": false
+        },
+        "override_definition": {
+            "type": "object",
+            "properties": {
+                "cascade": {
+                    "type": "string",
+                    "enum": ["update", "replace", "overwrite"],
+                    "default": "update",
+                    "description": "How this override should cascade with inherited values"
+                },
+                "pattern": {"$ref": "#/$defs/pattern_string"},
+                "format": {"$ref": "#/$defs/parseformat_definition"},
+                "parse": {"$ref": "#/$defs/parseformat_definition"},
+                "target": {"$ref": "#/$defs/context_path"},
+                "endpoint": {"$ref": "#/$defs/context_path"},
+                "template": {
+                    "type": "string",
+                    "description": "Reference to a template definition"
+                },
+                "is_deprecated": {
+                    "type": "boolean",
+                    "description": "Whether this segment override marks the segment deprecated"
+                },
+                "is_readonly": {
+                    "type": "boolean",
+                    "description": "Whether this segment override marks the segment readonly"
+                },
+                "is_intermediate": {
+                    "type": "boolean",
+                    "description": "Whether this segment is intermediate"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Case-insensitive options"
+                },
+                "switch": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/switch_case"},
+                    "description": "Switch cases for conditional path resolution"
+                },
+                "paths": {"$ref": "#/$defs/paths_definition"},
+                "targets": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^[a-zA-Z_][a-zA-Z0-9_]*(?:\\.[a-zA-Z_][a-zA-Z0-9_]*)*$": {"$ref": "#/$defs/target_definition"}
+                    },
+                    "additionalProperties": false,
+                    "description": "Target mappings for read operations"
+                },
+                "segments": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Segment names this override applies to"
+                },
+                "build": {
+                    "type": "string",
+                    "description": "Build expression for this override"
+                }
+            },
+            "additionalProperties": false
+        },
+        "config_definition": {
+            "type": "object",
+            "properties": {
+                "variables": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "case_sensitive": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether pattern matching is case sensitive (default: false for case insensitive)"
+                }
+            },
+            "additionalProperties": true
+        }
+    },
+    "properties": {
+        "uid": {
+            "type": "string",
+            "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*(?:\\.[a-zA-Z_][a-zA-Z0-9_]*)*$",
+            "description": "Unique identifier for this schema"
+        },
+        "inherits": {
+            "oneOf": [
+                {"type": "string"},
+                {
+                    "type": "array",
+                    "items": {"type": "string"}
+                }
+            ],
+            "description": "Schema(s) to inherit from"
+        },
+        "import": {
+            "oneOf": [
+                {"type": "string"},
+                {
+                    "type": "array",
+                    "items": {"type": "string"}
+                }
+            ],
+            "description": "Schema(s) to import"
+        },
+        "pattern": {"$ref": "#/$defs/pattern_string"},
+        "root_path": {
+            "type": "string",
+            "description": "Root path for file operations"
+        },
+        "segmenter": {
+            "type": "string",
+            "description": "Segmenter to use for this schema"
+        },
+        "context_filters": {
+            "type": "array",
+            "items": {"$ref": "#/$defs/context_filter"},
+            "description": "Filters to quickly determine schema validity for context"
+        },
+        "functors": {
+            "type": "array",
+            "items": {"$ref": "#/$defs/functor_definition"},
+            "description": "Functor definitions for this schema"
+        },
+        "segmenters": {
+            "type": "array",
+            "items": {"$ref": "#/$defs/segmenter_definition"},
+            "description": "Segmenter definitions for this schema"
+        },
+        "aliases": {
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z_][a-zA-Z0-9_]*$": {
+                    "type": "string",
+                    "description": "Alias mapping to functor or segmenter"
+                }
+            },
+            "additionalProperties": false,
+            "description": "Alias definitions for functors and segmenters"
+        },
+        "templates": {
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z_][a-zA-Z0-9_]*$": {"$ref": "#/$defs/template_definition"}
+            },
+            "additionalProperties": false,
+            "description": "Template definitions for reusable patterns"
+        },
+        "config": {"$ref": "#/$defs/config_definition"},
+        "paths": {"$ref": "#/$defs/paths_definition"},
+        "overrides": {
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z_][a-zA-Z0-9_]*(?:\\.[a-zA-Z_][a-zA-Z0-9_]*)*$": {"$ref": "#/$defs/override_definition"}
+            },
+            "additionalProperties": false,
+            "description": "Override definitions for inherited schemas"
+        }
+    },
+    "additionalProperties": false
+}

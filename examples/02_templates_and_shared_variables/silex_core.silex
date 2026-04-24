@@ -1,0 +1,28 @@
+{
+    "functors": [
+        {
+            "package": "silex",
+            "module": "silex.impl.functors.case_conversion",
+            "name": "ConvertLowerCaseFunctor",
+            "aliases": ["lower_case", "lowercase", "lower"],
+            "language": "python"
+        },
+        {
+            "package": "silex",
+            "module": "silex.impl.functors.case_split",
+            "name": "SplitCamelCaseFunctor",
+            "aliases": ["camelcase", "CC"]
+        },
+        {
+            "package": "silex",
+            "module": "silex.impl.functors.lexicon",
+            "name": "LexiconFunctor",
+            "aliases": ["lexicon", "L"]
+        }
+    ],
+    "segmenters": ["silex.FilesystemSegmenter"],
+    "aliases": {
+        "L": "silex.LexiconFunctor",
+        "CC": "silex.impl.functors.case_split.SplitCamelCaseFunctor"
+    }
+}

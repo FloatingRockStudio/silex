@@ -1,0 +1,38 @@
+{
+    "uid": "example.dir.base_publish",
+    "pattern": ".*publish.*",
+    "root_path": "/show/publish",
+    "segmenter": "silex.FilesystemSegmenter",
+    "paths": {
+        "project": {
+            "pattern": "[A-Z0-9_]+",
+            "target": "context.project",
+            "format": "{context.project}",
+            "paths": {
+                "asset": {
+                    "pattern": "[A-Za-z0-9_]+",
+                    "target": "context.asset",
+                    "format": "{context.asset}",
+                    "paths": {
+                        "publish_root": {
+                            "pattern": "publish",
+                            "format": "publish",
+                            "paths": {
+                                "version": {
+                                    "pattern": "v([0-9]{3})",
+                                    "format": "v{file.version:03d}",
+                                    "parse": {
+                                        "targets": {
+                                            "file.version": {"group": 1, "type": "int"}
+                                        }
+                                    },
+                                    "endpoint": "asset.publish.version"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
