@@ -19,6 +19,32 @@ For a wheel-only local smoke build, this is sufficient:
 python -m pip wheel --no-deps --wheel-dir dist .
 ```
 
+## Rez Dev Packaging
+
+When installing a local development build into Rez on Windows, build a wheel first and give that wheel to `rez-pip2`. Installing directly from the source tree can leave pip's temporary `_in_process.py` file locked on Windows during the PEP 517 metadata step.
+
+Build the wheel with the target Rez Python:
+
+```bash
+rez-env python-3.9.7 -- python -m pip wheel --no-deps --no-build-isolation --wheel-dir dist .
+```
+
+Install the resulting wheel with `rez-pip2` from the `rez_pip` environment:
+
+```bash
+rez-env rez_pip -- rez-pip2 --python-version 3.9.7 "fr-silex @ file:///<absolute-repo-path>/dist/<wheel-file>.whl"
+```
+
+Validate the installed Rez package without adding local build directories to `PYTHONPATH`:
+
+```bash
+rez-env python-3.9.7 fr_silex -- python -c "import silex; print(silex.__file__)"
+```
+
+If the target Python fails with imports from another Python version, clear `PYTHONHOME` and `PYTHONPATH` before invoking `rez-pip2`. If `rez-pip2` reports `InvalidRequirement` for a raw `.whl` path, use the PEP 508 direct-reference form shown above instead of passing the Windows path directly. With `rez_pip` 0.4.2 on Windows, local wheel URLs may also be reported as `/H:/...`; normalize that to `H:/...` in a launcher script or update `rez_pip` before retrying.
+
+For release validation, repeat the wheel build, Rez install, and import smoke test for every supported Python version listed in the packaging configuration.
+
 ## Build
 
 Configure and build the native project directly with CMake when you need local C++ artifacts:

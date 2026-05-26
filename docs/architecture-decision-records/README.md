@@ -64,6 +64,11 @@ An Architecture Decision Record (ADR) captures an important architectural decisi
   - GitHub Actions pipelines for wheels, releases, and public docs
   - **Status**: Accepted | **Date**: 2026-04-23
 
+- [ADR-011: Python Functor Registry Adapter](ADR-011-python-functor-registry-adapter.md)
+  - Python functors are wrapped in a C++ `IFunctor` adapter at registry registration
+  - Resolver registry dispatch preserves Python parse and format behavior across the pybind11 boundary
+  - **Status**: Accepted | **Date**: 2026-05-26
+
 ## ADR Format
 
 Each ADR follows this structure:
