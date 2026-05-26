@@ -17,9 +17,51 @@
 
 #include <json/value.h>
 
+#include <variant>
+
 namespace py = pybind11;
 
 namespace {
+/// Adapter that keeps a Python functor object alive and forwards C++ IFunctor calls to it.
+class PythonFunctorAdapter : public silex::IFunctor {
+public:
+    explicit PythonFunctorAdapter(py::object functor)
+        : m_functor(std::move(functor)) {}
+
+    silex::ParseResult parse(
+        const std::vector<silex::FunctorInput>& inputs,
+        const std::vector<silex::FunctorOutput>& outputs,
+        const silex::FunctorContext& context) override {
+        py::gil_scoped_acquire acquire;
+        return m_functor.attr("parse")(
+            functorInputsToPyList(inputs),
+            outputs,
+            context).cast<silex::ParseResult>();
+    }
+
+    silex::FormatResult format(
+        const std::vector<silex::FunctorInput>& inputs,
+        const silex::FunctorContext& context) override {
+        py::gil_scoped_acquire acquire;
+        return m_functor.attr("format")(
+            functorInputsToPyList(inputs),
+            context).cast<silex::FormatResult>();
+    }
+
+private:
+    static py::list functorInputsToPyList(const std::vector<silex::FunctorInput>& inputs) {
+        py::list result;
+        for (const auto& input : inputs) {
+            std::visit([&result](const auto& value) {
+                result.append(py::cast(value));
+            }, input);
+        }
+        return result;
+    }
+
+    py::object m_functor;
+};
+
 /// Convert Json::Value to Python object recursively.
 py::object jsonToPy(const Json::Value& val) {
     switch (val.type()) {
@@ -60,8 +102,9 @@ void bindCore(py::module_& m) {
         .def("name", &core::Registry::name,
             "Get the registry name.")
         .def("register_functor",
-            [](core::Registry& self, const SilexFunctorInfo& info, std::shared_ptr<IFunctor> functor) {
-                self.registerFunctor(info, [functor]() { return functor; });
+            [](core::Registry& self, const SilexFunctorInfo& info, py::object functor) {
+                std::shared_ptr<IFunctor> adapter = std::make_shared<PythonFunctorAdapter>(std::move(functor));
+                self.registerFunctor(info, [adapter]() -> std::shared_ptr<IFunctor> { return adapter; });
             },
             py::arg("info"), py::arg("functor"),
             "Register a functor with its metadata and instance.")
