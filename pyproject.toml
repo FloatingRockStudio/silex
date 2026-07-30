@@ -6,7 +6,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "fr-silex"
-version = "0.5.3"
+version = "0.5.4"
 description = "Schema-driven path and URI resolver with a C++17 core and pybind11 bindings"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -46,4 +46,10 @@ wheel.packages = []
 build = "cp39-* cp310-* cp311-*"
 skip = "*-musllinux_*"
 test-command = "python -c \"import silex; print(silex.__file__)\""
+
+[tool.cibuildwheel.windows]
+# silex_core.dll is intentionally installed into the wheel next to the
+# top-level silex pyd; --ignore-existing stops delvewheel from trying to
+# resolve it on PATH while still vendoring the MSVC runtime DLLs.
+repair-wheel-command = "delvewheel repair --ignore-existing -w {dest_dir} -v {wheel}"
 
