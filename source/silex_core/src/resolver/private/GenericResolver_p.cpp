@@ -1415,6 +1415,19 @@ SilexPathResolve GenericResolver::Impl::writePathRecursive(
                 logger->debug("Write path for '{}': '{}' -> '{}'",
                     schemaSeg->name, parentPath, newPath);
 
+                // A switch segment that wrote a concrete branch value must
+                // traverse that branch only. Without this, every branch that
+                // reaches the target endpoint produces a match and the first
+                // one wins, yielding hybrid paths (e.g. a shot_fragment URI
+                // continuing with the asset_fragment chain and silently
+                // dropping the sequence/shot segments).
+                std::optional<std::string> effectiveBranchKey = selectedBranchKey;
+                if (!effectiveBranchKey &&
+                    (schemaSeg->branches.count(candidateOutput) > 0 ||
+                     schemaSeg->branchEndpoints.count(candidateOutput) > 0)) {
+                    effectiveBranchKey = candidateOutput;
+                }
+
                 // Check if we've reached the target endpoint
                 if (targetEndpoint && !schemaSeg->endpoint.empty()) {
                     bool endpointMatch = false;
@@ -1472,9 +1485,9 @@ SilexPathResolve GenericResolver::Impl::writePathRecursive(
                 logger->debug("Segment '{}' has {} branches, {} default children",
                     schemaSeg->name, schemaSeg->branches.size(), children.size());
 
-                if (selectedBranchKey) {
-                    auto endpointIt = schemaSeg->branchEndpoints.find(*selectedBranchKey);
-                    bool hasBranchChildren = schemaSeg->branches.count(*selectedBranchKey) > 0;
+                if (effectiveBranchKey) {
+                    auto endpointIt = schemaSeg->branchEndpoints.find(*effectiveBranchKey);
+                    bool hasBranchChildren = schemaSeg->branches.count(*effectiveBranchKey) > 0;
                     if (targetEndpoint && endpointIt != schemaSeg->branchEndpoints.end() && !hasBranchChildren) {
                         for (const auto& ep : *targetEndpoint) {
                             if (endpointMatches(ep, endpointIt->second)) {
@@ -1498,7 +1511,7 @@ SilexPathResolve GenericResolver::Impl::writePathRecursive(
                 bool branchMatched = false;
                 for (const auto& [branchKey, branchSegs] : schemaSeg->branches) {
                     if (branchKey == "") continue;
-                    if (selectedBranchKey && branchKey != *selectedBranchKey) {
+                    if (effectiveBranchKey && branchKey != *effectiveBranchKey) {
                         continue;
                     }
 

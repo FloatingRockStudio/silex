@@ -1,0 +1,144 @@
+{
+    "uid": "test.switch.endpoint",
+    "import": ["./common"],
+    "root_path": "TSW://",
+
+    "segmenters": [
+        "silex.impl.segmenters.uri.URISegmenter"
+    ],
+
+    "pattern": "TSW://.*",
+    "segmenter": "silex.impl.segmenters.uri.URISegmenter",
+
+    // Two switch branches whose chains end in the SAME endpoint uid but
+    // with different intermediate segments. Writing must traverse the
+    // branch selected by the written switch value — not whichever branch
+    // reaches the endpoint first.
+    "paths": {
+        "uri_context": {
+            "pattern": "(asset_fragment|shot_fragment)",
+            "parse": {
+                "targets": {
+                    "uri.context": {
+                        "group": 1
+                    }
+                }
+            },
+            "format": "{uri.context}",
+            "switch": [
+                {
+                    "value": "asset_fragment",
+                    "paths": {
+                        "project": {
+                            "pattern": "[A-Z0-9]+",
+                            "parse": {
+                                "targets": {
+                                    "context.project": {
+                                        "group": 0
+                                    }
+                                }
+                            },
+                            "format": "{context.project}",
+                            "paths": {
+                                "entity": {
+                                    "pattern": "[a-zA-Z0-9_]+",
+                                    "parse": {
+                                        "targets": {
+                                            "context.entity": {
+                                                "group": 0
+                                            }
+                                        }
+                                    },
+                                    "format": "{context.entity}",
+                                    "paths": {
+                                        "component": {
+                                            "endpoint": "component",
+                                            "pattern": "[a-zA-Z0-9_]+",
+                                            "parse": {
+                                                "targets": {
+                                                    "context.component": {
+                                                        "group": 0
+                                                    }
+                                                }
+                                            },
+                                            "format": "{context.component}"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "value": "shot_fragment",
+                    "paths": {
+                        "project": {
+                            "pattern": "[A-Z0-9]+",
+                            "parse": {
+                                "targets": {
+                                    "context.project": {
+                                        "group": 0
+                                    }
+                                }
+                            },
+                            "format": "{context.project}",
+                            "paths": {
+                                "sequence": {
+                                    "pattern": "[a-zA-Z0-9_]+",
+                                    "parse": {
+                                        "targets": {
+                                            "context.sequence": {
+                                                "group": 0
+                                            }
+                                        }
+                                    },
+                                    "format": "{context.sequence}",
+                                    "paths": {
+                                        "shot": {
+                                            "pattern": "[a-zA-Z0-9_]+",
+                                            "parse": {
+                                                "targets": {
+                                                    "context.shot": {
+                                                        "group": 0
+                                                    }
+                                                }
+                                            },
+                                            "format": "{context.shot}",
+                                            "paths": {
+                                                "entity": {
+                                                    "pattern": "[a-zA-Z0-9_]+",
+                                                    "parse": {
+                                                        "targets": {
+                                                            "context.entity": {
+                                                                "group": 0
+                                                            }
+                                                        }
+                                                    },
+                                                    "format": "{context.entity}",
+                                                    "paths": {
+                                                        "component": {
+                                                            "endpoint": "component",
+                                                            "pattern": "[a-zA-Z0-9_]+",
+                                                            "parse": {
+                                                                "targets": {
+                                                                    "context.component": {
+                                                                        "group": 0
+                                                                    }
+                                                                }
+                                                            },
+                                                            "format": "{context.component}"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
